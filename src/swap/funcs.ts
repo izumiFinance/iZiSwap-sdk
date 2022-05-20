@@ -2,8 +2,8 @@
 import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
-import { BaseChain, buildSendingParams, TokenInfoFormatted } from '../base/types';
-import { getEVMContract } from '../base/utils';
+import { BaseChain, buildSendingParams } from '../base/types';
+import { getEVMContract, getTokenChainPath, getTokenChainPathReverse } from '../base/utils';
 
 import swapAbi from './abi.json';
 import { SwapChainWithExactInputParams, SwapChainWithExactOutputParams, SwapSingleWithExactInputParams, SwapSingleWithExactOutputParams } from './types';
@@ -202,45 +202,6 @@ export const swapSingleWithExactOutput = (
     return swapCalling.send(buildSendingParams(chain, options, gasPrice));
 }
 
-function num2Hex(n: number) {
-    if (n < 10) {
-        return String(n);
-    }
-    const str = 'ABCDEF';
-    return str[n - 10];
-}
-
-function fee2Hex(fee: number): string {
-    const n0 = fee % 16;
-    const n1 = Math.floor(fee / 16) % 16;
-    const n2 = Math.floor(fee / 256) % 16;
-    const n3 = Math.floor(fee / 4096) % 16;
-    const n4 = 0;
-    const n5 = 0;
-    return '0x' + num2Hex(n5) + num2Hex(n4) + num2Hex(n3) + num2Hex(n2) + num2Hex(n1) + num2Hex(n0);
-}
-
-function appendHex(hexString: string, newHexString: string): string {
-    return hexString + newHexString.slice(2);
-}
-
-export const getPath = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
-    let hexString = tokenChain[0].address
-    for (let i = 0; i < feeChain.length; i ++) {
-        hexString = appendHex(hexString, fee2Hex(feeChain[i]))
-        hexString = appendHex(hexString, tokenChain[i + 1].address)
-    }
-    return hexString
-}
-
-export const getPathReverse = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
-    let hexString = tokenChain[tokenChain.length - 1].address
-    for (let i = feeChain.length - 1; i >= 0; i ++) {
-        hexString = appendHex(hexString, fee2Hex(feeChain[i]))
-        hexString = appendHex(hexString, tokenChain[i].address)
-    }
-    return hexString
-}
 
 const getSwapChainWithExactInputCall = (
     swapContract: Contract, 
@@ -260,7 +221,7 @@ const getSwapChainWithExactInputCall = (
     }
     const inputToken = params.tokenChain[0]
     const outputToken = params.tokenChain[params.tokenChain.length - 1]
-    const path = getPath(params.tokenChain, params.feeChain)
+    const path = getTokenChainPath(params.tokenChain, params.feeChain)
 
     const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === inputToken.symbol);
     const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === outputToken.symbol);
@@ -338,7 +299,7 @@ const getSwapChainWithExactOutputCall = (
     }
     const inputToken = params.tokenChain[0]
     const outputToken = params.tokenChain[params.tokenChain.length - 1]
-    const path = getPathReverse(params.tokenChain, params.feeChain)
+    const path = getTokenChainPathReverse(params.tokenChain, params.feeChain)
 
     const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === inputToken.symbol);
     const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === outputToken.symbol);
