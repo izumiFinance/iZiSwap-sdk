@@ -21,7 +21,7 @@ const getSwapSingleWithExactInputCall = (
     gasLimit?: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const isX2Y = params.inputToken.address.toLowerCase() < params.inputToken.address.toLowerCase()
+    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
@@ -116,7 +116,7 @@ const getSwapSingleWithExactOutputCall = (
     gasLimit?: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const isX2Y = params.inputToken.address.toLowerCase() < params.inputToken.address.toLowerCase()
+    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {

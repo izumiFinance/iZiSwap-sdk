@@ -18,7 +18,7 @@ export const quoterSwapSingleWithExactInput = async (
     // chain: BaseChain,
     params: QuoterSwapSingleWithExactInputParams
 ) : Promise<{outputAmount: string, finalPoint: number}> => {
-    const isX2Y = params.inputToken.address.toLowerCase() < params.inputToken.address.toLowerCase()
+    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     
     if (isX2Y) {
@@ -54,7 +54,7 @@ export const quoterSwapSingleWithExactOutput = async (
     // chain: BaseChain,
     params: QuoterSwapSingleWithExactOutputParams
 ) : Promise<{inputAmount: string, finalPoint: number}> => {
-    const isX2Y = params.inputToken.address.toLowerCase() < params.inputToken.address.toLowerCase()
+    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     
     if (isX2Y) {
