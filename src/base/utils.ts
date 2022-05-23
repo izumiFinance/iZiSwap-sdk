@@ -2,6 +2,7 @@ import Web3 from "web3";
 import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
 import { TokenInfoFormatted } from "./types";
+import {BigNumber} from 'bignumber.js'
 
 export const getEVMContract = (
     abi: any,

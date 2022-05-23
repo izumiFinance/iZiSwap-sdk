@@ -1,4 +1,5 @@
 
+import { Contract } from 'web3-eth-contract'
 export interface TokenInfoFormatted {
     chainId: number;
     name: string;
@@ -59,6 +60,22 @@ export interface TransactionObject {
     chain?: any;
     hardfork?: any;
     common?: any;
+}
+
+export interface iZiContract extends Contract {
+    address: string
+}
+
+export enum TickRoundingType {
+    TICK_ROUNDING_NEAREST = 0,
+    TICK_ROUNDING_UP = 1,
+    TICK_ROUNDING_DOWN = 2
+}
+
+export enum PriceRoundingType {
+    PRICE_ROUNDING_NEAREST = 0,
+    PRICE_ROUNDING_UP = 1,
+    PRICE_ROUNDING_DOWN = 2
 }
 
 
