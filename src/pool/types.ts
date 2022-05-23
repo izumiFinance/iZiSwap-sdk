@@ -1,10 +1,13 @@
-export interface State {
-
-    sqrtPrice_96: string,
+export interface BaseState {
     currentPoint: number,
-    observationCurrentIndex: number,
-    observationQueueLen: number,
-    observationNextQueueLen: number,
     liquidity: string,
     liquidityX: string
+}
+
+export interface State extends BaseState {
+
+    sqrtPrice_96: string,
+    observationCurrentIndex: number,
+    observationQueueLen: number,
+    observationNextQueueLen: number
 }

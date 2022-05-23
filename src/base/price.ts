@@ -1,4 +1,4 @@
-import { PriceRoundingType, TickRoundingType, TokenInfoFormatted } from "./types"
+import { PriceRoundingType, PointRoundingType, TokenInfoFormatted } from "./types"
 import { BigNumber } from 'bignumber.js'
 
 export const priceDecimal2PriceUndecimal = (
@@ -23,95 +23,99 @@ export const priceUndecimal2PriceDecimal = (
     return Number(priceUndecimalAByB.times(10 ** tokenA.decimal).div(10 **tokenB.decimal))
 }
 
-function _xyPriceDecimal2Tick(
+function _xyPriceDecimal2Point(
     tokenX: TokenInfoFormatted, 
     tokenY: TokenInfoFormatted, 
     priceDecimalXByY: number, 
-    roundingType: TickRoundingType): number {
+    roundingType: PointRoundingType): number {
     const priceUndecimalXByY = priceDecimal2PriceUndecimal(tokenX, tokenY, priceDecimalXByY)
-    const tick = Math.log(Number(priceUndecimalXByY)) / Math.log(1.0001)
-    if (roundingType === TickRoundingType.TICK_ROUNDING_NEAREST) {
-        return Math.round(tick)
-    } else if (roundingType === TickRoundingType.TICK_ROUNDING_UP) {
-        return Math.ceil(tick)
+    const point = Math.log(Number(priceUndecimalXByY)) / Math.log(1.0001)
+    if (roundingType === PointRoundingType.POINT_ROUNDING_NEAREST) {
+        return Math.round(point)
+    } else if (roundingType === PointRoundingType.POINT_ROUNDING_UP) {
+        return Math.ceil(point)
     } else {
-        return Math.floor(tick)
+        return Math.floor(point)
     }
 }
-function _xyPriceUndecimal2Tick(
+function _xyPriceUndecimal2Point(
     priceUndecimalXByY: number, 
-    roundingType: TickRoundingType): number {
-    const tick = Math.log(priceUndecimalXByY) / Math.log(1.0001)
-    if (roundingType === TickRoundingType.TICK_ROUNDING_NEAREST) {
-        return Math.round(tick)
-    } else if (roundingType === TickRoundingType.TICK_ROUNDING_UP) {
-        return Math.ceil(tick)
+    roundingType: PointRoundingType): number {
+    const point = Math.log(priceUndecimalXByY) / Math.log(1.0001)
+    if (roundingType === PointRoundingType.POINT_ROUNDING_NEAREST) {
+        return Math.round(point)
+    } else if (roundingType === PointRoundingType.POINT_ROUNDING_UP) {
+        return Math.ceil(point)
     } else {
-        return Math.floor(tick)
+        return Math.floor(point)
     }
 }
 
-export const priceDecimal2Tick = (
+export const priceDecimal2Point = (
     tokenA: TokenInfoFormatted,
     tokenB: TokenInfoFormatted,
     priceDecimalAByB: number,
     roundingType: PriceRoundingType): number => {
     if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
-        let tickRoundingType = TickRoundingType.TICK_ROUNDING_NEAREST
+        let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_DOWN
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
         }
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_UP) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_UP
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_UP
         }
-        return _xyPriceDecimal2Tick(tokenA, tokenB, priceDecimalAByB, tickRoundingType)
+        return _xyPriceDecimal2Point(tokenA, tokenB, priceDecimalAByB, pointRoundingType)
     } else {
-        let tickRoundingType = TickRoundingType.TICK_ROUNDING_NEAREST
+        let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_UP
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_UP
         }
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_UP) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_DOWN
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
         }
-        return _xyPriceDecimal2Tick(tokenB, tokenA, 1 / priceDecimalAByB, tickRoundingType)
+        return _xyPriceDecimal2Point(tokenB, tokenA, 1 / priceDecimalAByB, pointRoundingType)
     }
 }
 
-export const priceUndecimal2Tick = (
+export const priceUndecimal2Point = (
     tokenA: TokenInfoFormatted,
     tokenB: TokenInfoFormatted,
     priceUndecimalAByB: number,
     roundingType: PriceRoundingType): number => {
     if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
-        let tickRoundingType = TickRoundingType.TICK_ROUNDING_NEAREST
+        let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_DOWN
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
         }
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_UP) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_UP
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_UP
         }
-        return _xyPriceUndecimal2Tick(priceUndecimalAByB, tickRoundingType)
+        return _xyPriceUndecimal2Point(priceUndecimalAByB, pointRoundingType)
     } else {
-        let tickRoundingType = TickRoundingType.TICK_ROUNDING_NEAREST
+        let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_UP
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_UP
         }
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_UP) {
-            tickRoundingType = TickRoundingType.TICK_ROUNDING_DOWN
+            pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
         }
-        return _xyPriceUndecimal2Tick(1 / priceUndecimalAByB, tickRoundingType)
+        return _xyPriceUndecimal2Point(1 / priceUndecimalAByB, pointRoundingType)
     }
 }
 
-export const tick2PriceUndecimal = (
+export const point2PoolPriceUndecimalSqrt = (point: number) : number => {
+    return (1.0001 ** point) ** 0.5;
+}
+
+export const point2PriceUndecimal = (
     tokenA: TokenInfoFormatted,
     tokenB: TokenInfoFormatted,
-    tick: number
+    point: number
 ): BigNumber => {
     if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
-        return new BigNumber(1.0001 ** tick)
+        return new BigNumber(1.0001 ** point)
     } else {
-        return new BigNumber(1).div(1.0001 ** tick)
+        return new BigNumber(1).div(1.0001 ** point)
     }
 }
 
@@ -129,19 +133,19 @@ export const getTokenXYFromToken = (tokenA: TokenInfoFormatted, tokenB: TokenInf
     }
 }
 
-export const tick2PriceDecimal = (
+export const point2PriceDecimal = (
     tokenA: TokenInfoFormatted,
     tokenB: TokenInfoFormatted,
-    tick: number
+    point: number
 ): number => {
     let priceDecimal = 0;
     let needReverse = false;
     const {tokenX, tokenY} = getTokenXYFromToken(tokenA, tokenB)
-    if (tick > 0) {
-        priceDecimal = priceUndecimal2PriceDecimal(tokenX, tokenY, new BigNumber(1.0001 ** tick))
+    if (point > 0) {
+        priceDecimal = priceUndecimal2PriceDecimal(tokenX, tokenY, new BigNumber(1.0001 ** point))
         needReverse = tokenA.address.toLowerCase() > tokenB.address.toLowerCase()
     } else {
-        priceDecimal = priceUndecimal2PriceDecimal(tokenY, tokenX, new BigNumber(1.0001 ** (-tick)))
+        priceDecimal = priceUndecimal2PriceDecimal(tokenY, tokenX, new BigNumber(1.0001 ** (-point)))
         needReverse = tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
     }
     if (needReverse) {
@@ -150,26 +154,26 @@ export const tick2PriceDecimal = (
     return priceDecimal
 }
 
-export const tickSpacingRoundingUp = (tick: number, tickSpacing: number) : number => {
-    let mod = tick % tickSpacing
+export const pointDeltaRoundingUp = (point: number, pointDelta: number) : number => {
+    let mod = point % pointDelta
     if (mod < 0) {
-        mod += tickSpacing
+        mod += pointDelta
     }
     if (mod === 0) {
-        return tick
+        return point
     } else {
-        return tick + tickSpacing - mod
+        return point + pointDelta - mod
     }
 }
 
-export const tickSpacingRoundingDown = (tick: number, tickSpacing: number) : number => {
-    let mod = tick % tickSpacing
+export const pointDeltaRoundingDown = (point: number, pointDelta: number) : number => {
+    let mod = point % pointDelta
     if (mod < 0) {
-        mod += tickSpacing
+        mod += pointDelta
     }
     if (mod === 0) {
-        return tick
+        return point
     } else {
-        tick - mod
+        point - mod
     }
 }

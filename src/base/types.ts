@@ -66,10 +66,10 @@ export interface iZiContract extends Contract {
     address: string
 }
 
-export enum TickRoundingType {
-    TICK_ROUNDING_NEAREST = 0,
-    TICK_ROUNDING_UP = 1,
-    TICK_ROUNDING_DOWN = 2
+export enum PointRoundingType {
+    POINT_ROUNDING_NEAREST = 0,
+    POINT_ROUNDING_UP = 1,
+    POINT_ROUNDING_DOWN = 2
 }
 
 export enum PriceRoundingType {
