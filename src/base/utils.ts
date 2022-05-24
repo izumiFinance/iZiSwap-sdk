@@ -34,6 +34,20 @@ function appendHex(hexString: string, newHexString: string): string {
     return hexString + newHexString.slice(2);
 }
 
+export const parallelCollect = async <T>(
+    ...promiseList: Promise<T>[]
+): Promise<T[]> => {
+    const results: T[] = Array(promiseList.length);
+    for (const i in promiseList) {
+        if (!promiseList[i]) {
+            continue;
+        }
+        promiseList[i].then((r: T) => (results[i] = r));
+    }
+    await Promise.all(promiseList);
+    return results;
+}
+
 export const getTokenChainPath = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
     let hexString = tokenChain[0].address
     for (let i = 0; i < feeChain.length; i ++) {

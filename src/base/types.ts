@@ -62,10 +62,6 @@ export interface TransactionObject {
     common?: any;
 }
 
-export interface iZiContract extends Contract {
-    address: string
-}
-
 export enum PointRoundingType {
     POINT_ROUNDING_NEAREST = 0,
     POINT_ROUNDING_UP = 1,
