@@ -23,9 +23,9 @@ export const getPoolAddress = async (
     return poolAddress
 }
 
-export const getTickSpacing = async (pool: Contract) : Promise<number> => {
-    const tickSpacing = await pool.methods.pointDelta().call()
-    return tickSpacing
+export const getPointDelta = async (pool: Contract) : Promise<number> => {
+    const pointDelta = Number(await pool.methods.pointDelta().call())
+    return pointDelta
 }
 
 export const getPoolState = async (pool: Contract) : Promise<State> => {
@@ -34,10 +34,10 @@ export const getPoolState = async (pool: Contract) : Promise<State> => {
     } = await pool.methods.state().call()
     return {
         sqrtPrice_96: sqrtPrice_96.toString(),
-        currentPoint,
-        observationCurrentIndex,
-        observationQueueLen,
-        observationNextQueueLen,
+        currentPoint: Number(currentPoint),
+        observationCurrentIndex: Number(observationCurrentIndex),
+        observationQueueLen: Number(observationQueueLen),
+        observationNextQueueLen: Number(observationNextQueueLen),
         liquidity: liquidity.toString(),
         liquidityX: liquidityX.toString()
     }

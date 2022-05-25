@@ -143,7 +143,9 @@ export const _calciZiLiquidityAmountX = (
     const sqrtRate = Math.sqrt(1.0001);
     const sqrtPriceL = Math.pow(sqrtRate, leftPoint);
     const sqrtPricecurrentPointA1 = Math.pow(sqrtRate, currentPoint + 1);
+
     const unitLiquidityAmountY = _getAmountYNoRound(new BigNumber(1), sqrtPriceL, sqrtPricecurrentPointA1, sqrtRate);
+
     const liquidityFloat = amountY.div(unitLiquidityAmountY);
 
     const sqrtPriceR = Math.pow(sqrtRate, rightPoint);

@@ -25,6 +25,17 @@ export const getLiquidityManagerContract = (address: string, web3: Web3): Contra
     return getEVMContract(liquidityManagerAbi, address, web3);
 }
 
+
+export const getPoolAddress = async (
+    liquidityManagerContract: Contract, 
+    tokenA: TokenInfoFormatted, 
+    tokenB: TokenInfoFormatted, 
+    fee: number) : Promise<string> => {
+    const poolAddress = await liquidityManagerContract.methods.pool(tokenA.address, tokenB.address, fee).call()
+    return poolAddress
+}
+
+
 export const fetchLiquiditiesByTokenIds = async (
     chain: BaseChain, 
     web3: Web3, 
@@ -40,8 +51,8 @@ export const fetchLiquiditiesByTokenIds = async (
     const liquidities: Liquidity[] = liquidityResult.slice(refreshLiquidityMulticallData.length, liquidityResult.length).map((l, i) => {
         const liquidityRaw = web3.eth.abi.decodeParameters(liquidityParams, l) as LiquidityRawParams;
         const liquidity = {
-            leftPoint: liquidityRaw.leftPt,
-            rightPoint: liquidityRaw.rightPt,
+            leftPoint: Number(liquidityRaw.leftPt),
+            rightPoint: Number(liquidityRaw.rightPt),
             liquidity: liquidityRaw.liquidity.toString(),
             lastFeeScaleX_128: liquidityRaw.lastFeeScaleX_128.toString(),
             lastFeeScaleY_128: liquidityRaw.lastFeeScaleY_128.toString(),

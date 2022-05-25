@@ -100,3 +100,12 @@ export interface DecLiquidityParam {
     minAmountY: string;
     deadline?: string;
 }
+
+export interface CollectLiquidityParam {
+    tokenId: string;
+    tokenA: TokenInfoFormatted,
+    tokenB: TokenInfoFormatted,
+    maxAmountA: string;
+    maxAmountB: string;
+    strictERC20Token?: boolean;
+}
