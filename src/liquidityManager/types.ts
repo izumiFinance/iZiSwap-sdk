@@ -47,7 +47,7 @@ export interface Liquidity {
         uint256 deadline;
 */
 export interface MintParam {
-    recipient: string;
+    recipient?: string;
     tokenA: TokenInfoFormatted;
     tokenB: TokenInfoFormatted;
     fee: number;

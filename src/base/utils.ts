@@ -65,3 +65,14 @@ export const getTokenChainPathReverse = (tokenChain: TokenInfoFormatted[], feeCh
     }
     return hexString
 }
+
+export function decodeMethodResult(
+    contract: Contract,
+    methodName: string,
+    data: string
+) {
+    const typeDefine = (contract as any)._jsonInterface.filter(
+        (a: any) => a['name'] === methodName
+    )[0].outputs;
+    return (contract as any)._decodeMethodReturn(typeDefine, data);
+}

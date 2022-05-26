@@ -8,6 +8,7 @@ import { amount2Decimal, fetchToken } from '../../base/token/token';
 import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../base/price';
 import { BigNumber } from 'bignumber.js'
 import { calciZiLiquidityAmountDesired } from '../../liquidityManager/calc';
+import { mintEstimateGas } from '../../liquidityManager/liquidity';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -15,27 +16,28 @@ async function main(): Promise<void> {
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
     console.log('aaaaaaaa')
-    web3.eth.accounts.privateKeyToAccount(privateKey)
+    const account =  web3.eth.accounts.privateKeyToAccount(privateKey)
+    console.log('address: ', account.address)
 
     const liquidityManagerAddress = '0x93C22Fbeff4448F2fb6e432579b0638838Ff9581'
     const liquidityManagerContract = getLiquidityManagerContract(liquidityManagerAddress, web3)
 
     console.log('liquidity manager address: ', liquidityManagerAddress)
 
-    const wbnbAddress = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-    const usdtAddress = '0x55d398326f99059fF775485246999027B3197955'
+    const testAAddress = '0xCFD8A067e1fa03474e79Be646c5f6b6A27847399'
+    const testBAddress = '0xAD1F11FBB288Cd13819cCB9397E59FAAB4Cdc16F'
 
-    const wbnb = await fetchToken(wbnbAddress, chain, web3)
-    const usdt = await fetchToken(usdtAddress, chain, web3)
+    const testA = await fetchToken(testAAddress, chain, web3)
+    const testB = await fetchToken(testBAddress, chain, web3)
     const fee = 2000 // 2000 means 0.2%
 
-    const poolAddress = await getPoolAddress(liquidityManagerContract, wbnb, usdt, fee)
+    const poolAddress = await getPoolAddress(liquidityManagerContract, testA, testB, fee)
     const pool = getPoolContract(poolAddress, web3)
 
     const state = await getPoolState(pool)
 
-    const point1 = priceDecimal2Point(usdt, wbnb, 0.0024401, PriceRoundingType.PRICE_ROUNDING_NEAREST)
-    const point2 = priceDecimal2Point(usdt, wbnb, 0.0036548, PriceRoundingType.PRICE_ROUNDING_NEAREST)
+    const point1 = priceDecimal2Point(testA, testB, 0.099870, PriceRoundingType.PRICE_ROUNDING_NEAREST)
+    const point2 = priceDecimal2Point(testA, testB, 0.29881, PriceRoundingType.PRICE_ROUNDING_NEAREST)
 
     console.log('point1: ', point1)
     console.log('point2: ', point2)
@@ -52,16 +54,32 @@ async function main(): Promise<void> {
     console.log('left point: ', leftPoint)
     console.log('right point: ', rightPoint)
 
-    const maxUsdt = new BigNumber(4000).times(10 ** usdt.decimal)
-    const maxWbnb = calciZiLiquidityAmountDesired(
+    const maxTestA = new BigNumber(100).times(10 ** testA.decimal)
+    const maxTestB = calciZiLiquidityAmountDesired(
         leftPoint, rightPoint, state.currentPoint,
-        maxUsdt, false, wbnb, usdt
+        maxTestA, true, testA, testB
     )
-    console.log('max wbnb: ', maxWbnb.toFixed(0))
+    console.log('max testa: ', maxTestA.toFixed(0))
 
-    const maxWbnbDecimal = amount2Decimal(maxWbnb, wbnb)
+    const maxTestBDecimal = amount2Decimal(maxTestB, testB)
 
-    console.log('maxWbnbDecimal: ', maxWbnbDecimal)
+    console.log('maxTestBDecimal: ', maxTestBDecimal)
+
+    // esitmate gas
+    const mintParams = {
+        tokenA: testA,
+        tokenB: testB,
+        fee,
+        leftPoint,
+        rightPoint,
+        maxAmountA: maxTestA.toFixed(0),
+        maxAmountB: maxTestB.toFixed(0),
+        minAmountA: maxTestA.times(0.985).toFixed(0),
+        minAmountB: maxTestB.times(0.985).toFixed(0),
+    }
+
+    const gas = await mintEstimateGas(liquidityManagerContract, account.address, chain, mintParams, '5000000000')
+    console.log('gas: ', gas)
 
 }
 
