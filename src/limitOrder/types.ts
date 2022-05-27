@@ -47,3 +47,41 @@ export interface LimitOrder {
     sellXEarnY: boolean,
     active: boolean
 }
+
+// struct AddLimOrderParam {
+//     // tokenX of swap pool
+//     address tokenX;
+//     // tokenY of swap pool
+//     address tokenY;
+//     // fee amount of swap pool
+//     uint24 fee;
+//     // on which point to add limit order
+//     int24 pt;
+//     // amount of token to sell
+//     uint128 amount;
+//     // sell tokenX or sell tokenY
+//     bool sellXEarnY;
+
+//     uint256 deadline;
+// }
+
+export interface AddLimOrderParam {
+    idx: string,
+    sellToken: TokenInfoFormatted,
+    earnToken: TokenInfoFormatted,
+    fee: number,
+    point: number,
+    sellAmount: string,
+    deadline?: string,
+    strictERC20Token?: boolean
+}
+
+export interface CollectLimOrderParam {
+    orderIdx: string,
+    tokenX: TokenInfoFormatted,
+    tokenY: TokenInfoFormatted,
+    collectDecAmount: string,
+    collectEarnAmount: string,
+    recipient?: string,
+    strictERC20Token?: boolean,
+}

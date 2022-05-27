@@ -11,6 +11,7 @@ export interface SwapSingleWithExactInputParams {
     // amount = inputAmount / (10 ** inputToken.decimal)
     inputAmount: string;
     minOutputAmount: string;
+    recipient?: string;
     deadline?: string;
     boundaryPt?: number;
     // true if treat wrapped coin(wbnb or weth ...) as erc20 token
@@ -28,6 +29,7 @@ export interface SwapSingleWithExactOutputParams {
     // amount = outputAmount / (10 ** outputToken.decimal)
     outputAmount: string;
     maxInputAmount: string;
+    recipient?: string;
     deadline?: string;
     boundaryPt?: number;
     // true if treat wrapped coin(wbnb or weth ...) as erc20 token
@@ -46,6 +48,7 @@ export interface SwapChainWithExactInputParams {
     // amount = inputAmount / (10 ** inputToken.decimal)
     inputAmount: string;
     minOutputAmount: string;
+    recipient?: string;
     deadline?: string;
     // true if treat wrapped coin(wbnb or weth ...) as erc20 token
     strictERC20Token?: boolean;
@@ -63,6 +66,7 @@ export interface SwapChainWithExactOutputParams {
     // amount = outputAmount / (10 ** outputToken.decimal)
     outputAmount: string;
     maxInputAmount: string;
+    recipient?: string;
     deadline?: string;
     // true if treat wrapped coin(wbnb or weth ...) as erc20 token
     strictERC20Token?: boolean;

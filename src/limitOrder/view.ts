@@ -2,10 +2,9 @@ import Web3 from "web3"
 import { Contract } from 'web3-eth-contract'
 import { fetchToken } from "../base/token/token"
 import { BaseChain, TokenInfoFormatted } from "../base/types"
-import { decodeMethodResult, getEVMContract, parallelCollect } from "../base/utils"
+import { decodeMethodResult, getEVMContract } from "../base/utils"
 import { poolMetas } from "../liquidityManager/library/decodeParams"
 import limitOrderAbi from './abi.json'
-import { getActiveOrdersResponse, getDeactiveOrdersResponse } from "./library/decodeParams"
 import { LimitOrder } from "./types"
 import { BigNumber } from 'bignumber.js'
 import { point2PriceUndecimal, priceUndecimal2PriceDecimal } from "../base/price"
@@ -156,4 +155,11 @@ export const fetchLimitOrderOfAccount = async(
         }
     }
     return {activeOrders, deactiveOrders}
+}
+
+export const getDeactiveSlot = async(
+    limitOrderManager: Contract,
+    account: string
+): Promise<string> => {
+    return (await limitOrderManager.methods.getDeactiveSlot(account).call()).toString()
 }

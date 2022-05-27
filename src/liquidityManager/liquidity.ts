@@ -257,20 +257,21 @@ const getCollectLiquidityCall = (
 
     const outputIsChainCoin = (!strictERC20Token && (chain.tokenSymbol === params.tokenA.symbol || chain.tokenSymbol === params.tokenB.symbol));
     
-    const recipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : account;
+    const finalRecipientAddress = params.recipient ?? account
+    const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress
     const callings = []
 
     let collectCalling = undefined
     if (ifReverse) {
         collectCalling = liquidityManagerContract.methods.collect(
-            recipientAddress,
+            innerRecipientAddress,
             params.tokenId,
             params.maxAmountB,
             params.maxAmountA
         )
     } else {
         collectCalling = liquidityManagerContract.methods.collect(
-            recipientAddress,
+            innerRecipientAddress,
             params.tokenId,
             params.maxAmountA,
             params.maxAmountB
@@ -278,12 +279,12 @@ const getCollectLiquidityCall = (
     }
     callings.push(collectCalling)
     if (outputIsChainCoin) {
-        callings.push(liquidityManagerContract.methods.unwrapWETH9('0', account))
+        callings.push(liquidityManagerContract.methods.unwrapWETH9('0', finalRecipientAddress))
         let sweepTokenAddress = params.tokenA.address
         if (chain.tokenSymbol === params.tokenA.symbol) {
             sweepTokenAddress = params.tokenB.address
         }
-        callings.push(liquidityManagerContract.methods.sweepToken(sweepTokenAddress, '0', account))
+        callings.push(liquidityManagerContract.methods.sweepToken(sweepTokenAddress, '0', finalRecipientAddress))
     }
     
     if (callings.length === 1) {

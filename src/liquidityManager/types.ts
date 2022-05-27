@@ -108,4 +108,5 @@ export interface CollectLiquidityParam {
     maxAmountA: string;
     maxAmountB: string;
     strictERC20Token?: boolean;
+    recipient?: string;
 }

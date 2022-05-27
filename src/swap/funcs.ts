@@ -36,7 +36,8 @@ const getSwapSingleWithExactInputCall = (
     if (inputIsChainCoin) {
         options.value = params.inputAmount;
     }
-    const recipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : account;
+    const finalRecipientAddress = params.recipient ?? account
+    const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
     let swapCalling = undefined
@@ -46,7 +47,7 @@ const getSwapSingleWithExactInputCall = (
             tokenY: params.outputToken.address,
             fee: params.fee,
             boundaryPt,
-            recipient: recipientAddress,
+            recipient: innerRecipientAddress,
             amount: params.inputAmount,
             maxPayed: '0',
             minAcquired: params.minOutputAmount,
@@ -58,7 +59,7 @@ const getSwapSingleWithExactInputCall = (
             tokenY: params.inputToken.address,
             fee: params.fee,
             boundaryPt,
-            recipient: recipientAddress,
+            recipient: innerRecipientAddress,
             amount: params.inputAmount,
             maxPayed: '0',
             minAcquired: params.minOutputAmount,
@@ -71,7 +72,7 @@ const getSwapSingleWithExactInputCall = (
     }
     if (outputIsChainCoin) {
         // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
-        callings.push(swapContract.methods.unwrapWETH9('0', account))
+        callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
         return {swapCalling: callings[0], options}
@@ -131,7 +132,8 @@ const getSwapSingleWithExactOutputCall = (
     if (inputIsChainCoin) {
         options.value = params.maxInputAmount;
     }
-    const recipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : account;
+    const finalRecipientAddress = params.recipient ?? account
+    const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
     let swapCalling = undefined
@@ -141,7 +143,7 @@ const getSwapSingleWithExactOutputCall = (
             tokenY: params.outputToken.address,
             fee: params.fee,
             boundaryPt,
-            recipient: recipientAddress,
+            recipient: innerRecipientAddress,
             amount: params.outputAmount,
             maxPayed: params.maxInputAmount,
             minAcquired: params.outputAmount,
@@ -153,7 +155,7 @@ const getSwapSingleWithExactOutputCall = (
             tokenY: params.inputToken.address,
             fee: params.fee,
             boundaryPt,
-            recipient: recipientAddress,
+            recipient: innerRecipientAddress,
             amount: params.outputAmount,
             maxPayed: params.maxInputAmount,
             minAcquired: params.outputAmount,
@@ -166,7 +168,7 @@ const getSwapSingleWithExactOutputCall = (
     }
     if (outputIsChainCoin) {
         // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
-        callings.push(swapContract.methods.unwrapWETH9('0', account))
+        callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
         return {swapCalling: callings[0], options}
@@ -228,12 +230,13 @@ const getSwapChainWithExactInputCall = (
     if (inputIsChainCoin) {
         options.value = params.inputAmount;
     }
-    const recipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : account;
+    const finalRecipientAddress = params.recipient ?? account
+    const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
     const swapCalling = swapContract.methods.swapAmount({
         path,
-        recipient: recipientAddress,
+        recipient: innerRecipientAddress,
         amount: params.inputAmount,
         minAcquired: params.minOutputAmount,
         deadline
@@ -243,8 +246,7 @@ const getSwapChainWithExactInputCall = (
         callings.push(swapContract.methods.refundETH())
     }
     if (outputIsChainCoin) {
-        // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
-        callings.push(swapContract.methods.unwrapWETH9('0', account))
+        callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
         return {swapCalling: callings[0], options}
@@ -306,12 +308,13 @@ const getSwapChainWithExactOutputCall = (
     if (inputIsChainCoin) {
         options.value = params.maxInputAmount;
     }
-    const recipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : account;
+    const finalRecipientAddress = params.recipient ?? account
+    const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
     const swapCalling = swapContract.methods.swapAmount({
         path,
-        recipient: recipientAddress,
+        recipient: innerRecipientAddress,
         desire: params.outputAmount,
         maxPayed: params.maxInputAmount,
         deadline
@@ -322,7 +325,7 @@ const getSwapChainWithExactOutputCall = (
     }
     if (outputIsChainCoin) {
         // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
-        callings.push(swapContract.methods.unwrapWETH9('0', account))
+        callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
         return {swapCalling: callings[0], options}
