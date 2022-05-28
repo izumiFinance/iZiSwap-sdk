@@ -34,7 +34,7 @@ async function main(): Promise<void> {
         [testA]
     )
     console.log('liquidity len: ', liquidities.length)
-    console.log('liquidty: ', liquidities[0])
+    console.log('liquidtys: ', liquidities)
 
 }
 

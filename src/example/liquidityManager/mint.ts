@@ -8,7 +8,7 @@ import { amount2Decimal, fetchToken } from '../../base/token/token';
 import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../base/price';
 import { BigNumber } from 'bignumber.js'
 import { calciZiLiquidityAmountDesired } from '../../liquidityManager/calc';
-import { mintEstimateGas } from '../../liquidityManager/liquidity';
+import { getMintCall } from '../../liquidityManager/liquidity';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -59,7 +59,8 @@ async function main(): Promise<void> {
         leftPoint, rightPoint, state.currentPoint,
         maxTestA, true, testA, testB
     )
-    console.log('max testa: ', maxTestA.toFixed(0))
+    console.log('max testA: ', maxTestA.toFixed(0))
+    console.log('max testB: ', maxTestB.toFixed(0))
 
     const maxTestBDecimal = amount2Decimal(maxTestB, testB)
 
@@ -78,8 +79,40 @@ async function main(): Promise<void> {
         minAmountB: maxTestB.times(0.985).toFixed(0),
     }
 
-    const gas = await mintEstimateGas(liquidityManagerContract, account.address, chain, mintParams, '5000000000')
-    console.log('gas: ', gas)
+    const gasPrice = '5000000000'
+
+    const { mintCalling, options } = getMintCall(
+        liquidityManagerContract,
+        account.address,
+        chain,
+        mintParams,
+        gasPrice
+    )
+    
+    const gasLimit = await mintCalling.estimateGas(options)
+    console.log('gas limit: ', gasLimit)
+
+    // for metamask or other explorer's wallet provider
+    // one can easily use 
+    //
+    //    await collectLimitOrderCalling.send({...options, gas: gasLimit})
+    //
+    // instead of following 
+    // 'web3.eth.accounts.signTransaction' 
+    // and 'web3.eth.sendSignedTransaction'
+
+    const signedTx = await web3.eth.accounts.signTransaction(
+        {
+            ...options,
+            to: liquidityManagerAddress,
+            data: mintCalling.encodeABI(),
+            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+        }, 
+        privateKey
+    )
+    // nonce += 1;
+    const tx = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    console.log('tx: ', tx);
 
 }
 

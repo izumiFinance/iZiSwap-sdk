@@ -174,6 +174,6 @@ export const pointDeltaRoundingDown = (point: number, pointDelta: number) : numb
     if (mod === 0) {
         return point
     } else {
-        point - mod
+        return point - mod
     }
 }

@@ -1,22 +1,20 @@
 import { Contract } from 'web3-eth-contract'
-import { PromiEvent } from 'web3-core';
 import { BaseChain, buildSendingParams } from '../base/types'
 import { AddLimOrderParam, CollectLimOrderParam } from './types'
 
-const getNewLimOrderCall = (
+export const getNewLimOrderCall = (
     limitOrderManager: Contract,
     account: string,
     chain: BaseChain,
     params: AddLimOrderParam,
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ): {newLimOrderCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
 
     let tokenXAddress = params.sellToken.address.toLowerCase()
     let tokenYAddress = params.earnToken.address.toLowerCase()
     let sellXEarnY = true
-    if (tokenXAddress > tokenXAddress) {
+    if (tokenXAddress > tokenYAddress) {
         sellXEarnY = false
         let tmp = tokenYAddress
         tokenYAddress = tokenXAddress
@@ -26,7 +24,6 @@ const getNewLimOrderCall = (
     const options = {
         from: account,
         value: '0',
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
     if (!strictERC20Token) {
@@ -52,71 +49,34 @@ const getNewLimOrderCall = (
         callings.push(limitOrderManager.methods.refundETH())
     }
     if (callings.length === 1) {
-        return {newLimOrderCalling: callings[0], options}
+        return {newLimOrderCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {newLimOrderCalling: multicall, options}
+    return {newLimOrderCalling: multicall, options: buildSendingParams(chain, options, gasPrice)}
 }
 
-export const newLimOrderEstimateGas = async(
-    limitOrderContract: Contract,
-    account: string,
-    chain: BaseChain,
-    params: AddLimOrderParam,
-    gasPrice: string | number
-) : Promise<number> => {
-    const {newLimOrderCalling, options} = getNewLimOrderCall(limitOrderContract, account, chain, params, gasPrice)
-    return newLimOrderCalling.estimateGas(buildSendingParams(chain, options, gasPrice))
-}
-
-export const newLimOrder = (
-    limitOrderContract: Contract,
-    account: string,
-    chain: BaseChain,
-    params: AddLimOrderParam,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any> => {
-    const {newLimOrderCalling, options} = getNewLimOrderCall(limitOrderContract, account, chain, params, gasPrice, gasLimit)
-    return newLimOrderCalling.send(buildSendingParams(chain, options, gasPrice))
-}
-
-export const updateOrderEstimateGas = async(
+export const getUpdateOrderCall = (
     limitOrderManager: Contract,
     idx: string,
     account: string,
     chain: BaseChain,
     gasPrice: string | number
-) : Promise<number> => {
+) : {updateOrderCalling: any, options: any} => {
     const options = {
         from: account,
         maxFeePerGas: gasPrice,
     }
     const updateOrderCalling = limitOrderManager.methods.updateOrder(idx)
-    return updateOrderCalling.estimateGas(buildSendingParams(chain, options, gasPrice))
-}
-
-export const updateOrder = (
-    limitOrderManager: Contract,
-    idx: string,
-    account: string,
-    chain: BaseChain,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any> => {
-    const options = {
-        from: account,
-        maxFeePerGas: gasPrice,
-        gas: gasLimit
+    return {
+        updateOrderCalling,
+        options: buildSendingParams(chain, options, gasPrice)
     }
-    const updateOrderCalling = limitOrderManager.methods.updateOrder(idx)
-    return updateOrderCalling.send(buildSendingParams(chain, options, gasPrice))
 }
 
-export const decLimOrderEstimateGas = async(
+export const getDecLimOrderCall = (
     limitOrderManager: Contract,
     orderIdx: string,
     decAmount: string,
@@ -124,48 +84,26 @@ export const decLimOrderEstimateGas = async(
     account: string,
     chain: BaseChain,
     gasPrice: string | number
-) : Promise<number> => {
+) : {decLimOrderCalling: any, options: any} => {
     const options = {
         from: account,
         maxFeePerGas: gasPrice,
     }
     const decLimOrderCalling = limitOrderManager.methods.decLimOrder(orderIdx, decAmount, deadline)
-    return decLimOrderCalling.estimateGas(buildSendingParams(chain, options, gasPrice))
+    return { decLimOrderCalling, options: buildSendingParams(chain, options, gasPrice)}
 }
 
-export const decLimOrder = (
-    limitOrderManager: Contract,
-    orderIdx: string,
-    decAmount: string,
-    deadline: string,
-    account: string,
-    chain: BaseChain,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any> => {
-    const options = {
-        from: account,
-        maxFeePerGas: gasPrice,
-        gas: gasLimit
-    }
-    const decLimOrderCalling = limitOrderManager.methods.decLimOrder(orderIdx, decAmount, deadline)
-    return decLimOrderCalling.send(buildSendingParams(chain, options, gasPrice))
-}
-
-
-const getCollectLimitOrderCall = (
+export const getCollectLimitOrderCall = (
     limitOrderManager: Contract, 
     account: string,
     chain: BaseChain,
     params: CollectLimOrderParam, 
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ) : {collectLimitOrderCalling: any, options: any} => {
     const strictERC20Token = params.strictERC20Token ?? false
 
     const options = {
         from: account,
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
 
@@ -175,7 +113,7 @@ const getCollectLimitOrderCall = (
     const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
-    const collectCalling = limitOrderManager.methods.collect(
+    const collectCalling = limitOrderManager.methods.collectLimOrder(
         innerRecipientAddress,
         params.orderIdx,
         params.collectDecAmount,
@@ -193,43 +131,12 @@ const getCollectLimitOrderCall = (
     }
     
     if (callings.length === 1) {
-        return {collectLimitOrderCalling: callings[0], options}
+        return {collectLimitOrderCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
 
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {collectLimitOrderCalling: limitOrderManager.methods.multicall(multicall), options}
-}
-
-export const collectLimitOrderEstimateGas = async(
-    limitOrderManager: Contract,
-    account: string,
-    chain: BaseChain,
-    params: CollectLimOrderParam, 
-    gasPrice: number | string
-) : Promise<number> => {
-    const {collectLimitOrderCalling, options} = getCollectLimitOrderCall(
-        limitOrderManager, account, chain, params, gasPrice
-    )
-    return collectLimitOrderCalling.estimateGas(
-        buildSendingParams(chain, options, gasPrice)
-    )
-}
-
-export const collectLiquidity = async(
-    limitOrderManager: Contract,
-    account: string,
-    chain: BaseChain,
-    params: CollectLimOrderParam, 
-    gasPrice: number | string,
-    gasLimit: string | number
-) : Promise<number> => {
-    const {collectLimitOrderCalling, options} = getCollectLimitOrderCall(
-        limitOrderManager, account, chain, params, gasPrice, gasLimit
-    )
-    return collectLimitOrderCalling.send(
-        buildSendingParams(chain, options, gasPrice)
-    )
+    return {collectLimitOrderCalling: limitOrderManager.methods.multicall(multicall), options: buildSendingParams(chain, options, gasPrice)}
 }

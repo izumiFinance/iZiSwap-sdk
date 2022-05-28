@@ -33,6 +33,7 @@ export interface LimitOrder {
     amount: string,
     filled: string,
     sellingRemain: string,
+    sellingDec: string,
     accSellingDec: string,
     earn: string,
     pending: string,

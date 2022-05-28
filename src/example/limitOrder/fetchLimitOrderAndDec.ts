@@ -2,9 +2,10 @@
 import {BaseChain, ChainId, initialChainTable } from '../../base/types'
 import {privateKey} from '../../../.secret'
 import Web3 from 'web3';
-import { fetchToken } from '../../base/token/token';
+import { fetchToken } from '../../base/token/token'
 import { fetchLimitOrderOfAccount, getLimitOrderManagerContract } from '../../limitOrder/view';
-import { getDecLimOrderCall } from '../../limitOrder/limitOrder';
+import { getDecLimOrderCall } from '../../limitOrder/limitOrder'
+import { BigNumber } from 'bignumber.js'
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSC]
@@ -35,7 +36,49 @@ async function main(): Promise<void> {
     console.log('active orders len: ', activeOrders.length)
     console.log('deactive orders len: ', deactiveOrders.length)
     console.log(activeOrders)
-    
+
+    const activeOrderAt2 = activeOrders[2]
+    const orderIdx = activeOrderAt2.idx
+
+    console.log('limit order idx to dec: ', orderIdx)
+
+    const gasPrice = '5000000000'
+    // dec limit order of orderIdx
+    const {decLimOrderCalling, options} = getDecLimOrderCall(
+        limitOrderManager,
+        orderIdx,
+        activeOrderAt2.sellingRemain,
+        '0xffffffff',
+        account.address,
+        chain,
+        gasPrice
+    )
+
+    const gasLimit = await decLimOrderCalling.estimateGas(options)
+    console.log('gas limit: ', gasLimit)
+
+    // for metamask or other explorer's wallet provider
+    // one can easily use 
+    //
+    //    await decLimOrderCalling.send({...options, gas: gasLimit})
+    //
+    // instead of following 
+    // 'web3.eth.accounts.signTransaction' 
+    // and 'web3.eth.sendSignedTransaction'
+
+    const signedTx = await web3.eth.accounts.signTransaction(
+        {
+            ...options,
+            to: limitOrderAddress,
+            data: decLimOrderCalling.encodeABI(),
+            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+        }, 
+        privateKey
+    )
+    // nonce += 1;
+    const tx = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    console.log('tx: ', tx);
+
 }
 
 main().then(()=>process.exit(0))
