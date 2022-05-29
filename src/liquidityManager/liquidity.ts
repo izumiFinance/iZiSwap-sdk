@@ -131,7 +131,7 @@ export const getAddLiquidityCall = (
     return {addLiquidityCalling: multicall, options: buildSendingParams(chain, options, gasPrice)}
 }
 
-const getDecLiquidityCall = (
+export const getDecLiquidityCall = (
     liquidityManagerContract: Contract,
     account: string,
     chain: BaseChain,
@@ -154,7 +154,7 @@ const getDecLiquidityCall = (
     return {decLiquidityCalling, options: buildSendingParams(chain, options, gasPrice)}
 }
 
-const getCollectLiquidityCall = (
+export const getCollectLiquidityCall = (
     liquidityManagerContract: Contract, 
     account: string,
     chain: BaseChain,

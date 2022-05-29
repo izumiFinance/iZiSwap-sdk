@@ -3,6 +3,7 @@ import { State } from "../pool/types";
 
 
 export interface Liquidity {
+    tokenId: string;
     leftPoint: number;
     rightPoint: number;
     liquidity: string;

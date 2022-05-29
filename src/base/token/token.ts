@@ -15,6 +15,10 @@ export const decimal2Amount = (amountDecimal: number, token: TokenInfoFormatted)
     return new BigNumber(amountDecimal).times(10 ** token.decimal)
 }
 
+export const getErc20TokenContract = (address: string, web3: Web3) => {
+    return getContract(abi, address, web3)
+}
+
 
 export const getContract = (abi: any, address: string, web3: Web3) => {
     return new web3.eth.Contract(

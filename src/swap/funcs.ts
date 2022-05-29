@@ -12,13 +12,12 @@ export const getSwapContract = (address: string, web3: Web3): Contract => {
     return getEVMContract(swapAbi, address, web3);
 };
 
-const getSwapSingleWithExactInputCall = (
+export const getSwapSingleWithExactInputCall = (
     swapContract: Contract, 
     account: string,
     chain: BaseChain,
     params: SwapSingleWithExactInputParams, 
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
     const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
@@ -27,7 +26,6 @@ const getSwapSingleWithExactInputCall = (
     const options = {
         from: account,
         value: '0',
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
 
@@ -75,46 +73,22 @@ const getSwapSingleWithExactInputCall = (
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
-        return {swapCalling: callings[0], options}
+        return {swapCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
 
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {swapCalling: swapContract.methods.multicall(multicall), options}
+    return {swapCalling: swapContract.methods.multicall(multicall), options: buildSendingParams(chain, options, gasPrice)}
 }
 
-export const swapSingleWithExactInputEstimateGas = async (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapSingleWithExactInputParams,
-    gasPrice: string | number
-) : Promise<number> => {
-    const {swapCalling, options} = getSwapSingleWithExactInputCall(swapContract, account, chain, params, gasPrice);
-    return swapCalling.estimateGas(buildSendingParams(chain, options, gasPrice));
-}
-
-export const swapSingleWithExactInput = (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapSingleWithExactInputParams,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any>=> {
-    const {swapCalling, options} = getSwapSingleWithExactInputCall(swapContract, account, chain, params, gasPrice, gasLimit);
-    return swapCalling.send(buildSendingParams(chain, options, gasPrice));
-}
-
-const getSwapSingleWithExactOutputCall = (
+export const getSwapSingleWithExactOutputCall = (
     swapContract: Contract, 
     account: string,
     chain: BaseChain,
     params: SwapSingleWithExactOutputParams, 
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
     const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
@@ -123,7 +97,6 @@ const getSwapSingleWithExactOutputCall = (
     const options = {
         from: account,
         value: '0',
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
 
@@ -171,54 +144,28 @@ const getSwapSingleWithExactOutputCall = (
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
-        return {swapCalling: callings[0], options}
+        return {swapCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
 
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {swapCalling: swapContract.methods.multicall(multicall), options}
+    return {swapCalling: swapContract.methods.multicall(multicall), options: buildSendingParams(chain, options, gasPrice)}
 }
 
-export const swapSingleWithExactOutputEstimateGas = async (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapSingleWithExactOutputParams,
-    gasPrice: string | number
-) : Promise<number> => {
-    const {swapCalling, options} = getSwapSingleWithExactOutputCall(swapContract, account, chain, params, gasPrice);
-    return swapCalling.estimateGas(buildSendingParams(chain, options, gasPrice));
-}
-
-export const swapSingleWithExactOutput = (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapSingleWithExactOutputParams,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any>=> {
-    const {swapCalling, options} = getSwapSingleWithExactOutputCall(swapContract, account, chain, params, gasPrice, gasLimit);
-    return swapCalling.send(buildSendingParams(chain, options, gasPrice));
-}
-
-
-const getSwapChainWithExactInputCall = (
+export const getSwapChainWithExactInputCall = (
     swapContract: Contract, 
     account: string,
     chain: BaseChain,
     params: SwapChainWithExactInputParams, 
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
         from: account,
         value: '0',
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
     const inputToken = params.tokenChain[0]
@@ -249,54 +196,29 @@ const getSwapChainWithExactInputCall = (
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
-        return {swapCalling: callings[0], options}
+        return {swapCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
 
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {swapCalling: swapContract.methods.multicall(multicall), options}
-}
-
-export const swapChainWithExactInputEstimateGas = async (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapChainWithExactInputParams,
-    gasPrice: string | number
-) : Promise<number> => {
-    const {swapCalling, options} = getSwapChainWithExactInputCall(swapContract, account, chain, params, gasPrice);
-    return swapCalling.estimateGas(buildSendingParams(chain, options, gasPrice));
-}
-
-export const swapChainWithExactInput = (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapChainWithExactInputParams,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any>=> {
-    const {swapCalling, options} = getSwapChainWithExactInputCall(swapContract, account, chain, params, gasPrice, gasLimit);
-    return swapCalling.send(buildSendingParams(chain, options, gasPrice));
+    return {swapCalling: swapContract.methods.multicall(multicall), options: buildSendingParams(chain, options, gasPrice)}
 }
 
 
-const getSwapChainWithExactOutputCall = (
+export const getSwapChainWithExactOutputCall = (
     swapContract: Contract, 
     account: string,
     chain: BaseChain,
     params: SwapChainWithExactOutputParams, 
-    gasPrice: number | string,
-    gasLimit?: number | string
+    gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
         from: account,
         value: '0',
-        gas: gasLimit,
         maxFeePerGas: gasPrice,
     }
     const inputToken = params.tokenChain[0]
@@ -328,35 +250,12 @@ const getSwapChainWithExactOutputCall = (
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
-        return {swapCalling: callings[0], options}
+        return {swapCalling: callings[0], options: buildSendingParams(chain, options, gasPrice)}
     }
 
     const multicall: string[] = []
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {swapCalling: swapContract.methods.multicall(multicall), options}
-}
-
-export const swapChainWithExactOutputEstimateGas = async (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapChainWithExactOutputParams,
-    gasPrice: string | number
-) : Promise<number> => {
-    const {swapCalling, options} = getSwapChainWithExactOutputCall(swapContract, account, chain, params, gasPrice);
-    return swapCalling.estimateGas(buildSendingParams(chain, options, gasPrice));
-}
-
-export const swapChainWithExactOutput = (
-    swapContract: Contract, 
-    account: string,
-    chain: BaseChain,
-    params: SwapChainWithExactOutputParams,
-    gasPrice: string | number,
-    gasLimit: string | number
-) : PromiEvent<any>=> {
-    const {swapCalling, options} = getSwapChainWithExactOutputCall(swapContract, account, chain, params, gasPrice, gasLimit);
-    return swapCalling.send(buildSendingParams(chain, options, gasPrice));
+    return {swapCalling: swapContract.methods.multicall(multicall), options: buildSendingParams(chain, options, gasPrice)}
 }

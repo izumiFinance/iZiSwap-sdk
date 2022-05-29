@@ -51,6 +51,7 @@ export const fetchLiquiditiesByTokenIds = async (
     const liquidities: Liquidity[] = liquidityResult.slice(refreshLiquidityMulticallData.length, liquidityResult.length).map((l, i) => {
         const liquidityRaw = web3.eth.abi.decodeParameters(liquidityParams, l) as LiquidityRawParams;
         const liquidity = {
+            tokenId: tokenIdList[i],
             leftPoint: Number(liquidityRaw.leftPt),
             rightPoint: Number(liquidityRaw.rightPt),
             liquidity: liquidityRaw.liquidity.toString(),
