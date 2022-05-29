@@ -29,7 +29,7 @@ async function main(): Promise<void> {
 
     // fetch limit order
     const {activeOrders, deactiveOrders} = await fetchLimitOrderOfAccount(
-        chain, web3, limitOrderManager, '0xD0B1c02E8A6CA05c7737A3F4a0EEDe075fa4920C', [testA]
+        chain, web3, limitOrderManager, account.address, [testA]
     )
 
     console.log('active orders len: ', activeOrders.length)

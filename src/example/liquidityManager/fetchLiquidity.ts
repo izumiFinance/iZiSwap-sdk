@@ -30,7 +30,7 @@ async function main(): Promise<void> {
         chain, 
         web3, 
         liquidityManagerContract,
-        '0xD0B1c02E8A6CA05c7737A3F4a0EEDe075fa4920C',
+        account.address,
         [testA]
     )
     console.log('liquidity len: ', liquidities.length)
