@@ -84,6 +84,8 @@ async function main(): Promise<void> {
         gasPrice
     )
 
+    // before estimate gas and send transaction, 
+    // make sure you have approve swapAddress of token testA
     const gasLimit = await swapCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 

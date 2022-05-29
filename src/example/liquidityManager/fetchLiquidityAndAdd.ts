@@ -74,6 +74,8 @@ async function main(): Promise<void> {
     )
 
 
+    // before estimate gas and send transaction, 
+    // make sure you have approve liquidityManagerAddress of token testA and testB
     const gasLimit = await addLiquidityCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 

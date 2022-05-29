@@ -74,6 +74,8 @@ async function main(): Promise<void> {
         params,
         gasPrice
     )
+    // before estimate gas and send transaction, 
+    // make sure you have approve limitOrderAddress of sellToken
     const gasLimit = await newLimOrderCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 

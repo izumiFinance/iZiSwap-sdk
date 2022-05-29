@@ -79,7 +79,6 @@ async function main(): Promise<void> {
         gasPrice
     )
 
-
     const gasLimit = await collectLiquidityCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 
