@@ -59,7 +59,7 @@ export const getTokenChainPath = (tokenChain: TokenInfoFormatted[], feeChain: nu
 
 export const getTokenChainPathReverse = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
     let hexString = tokenChain[tokenChain.length - 1].address
-    for (let i = feeChain.length - 1; i >= 0; i ++) {
+    for (let i = feeChain.length - 1; i >= 0; i --) {
         hexString = appendHex(hexString, fee2Hex(feeChain[i]))
         hexString = appendHex(hexString, tokenChain[i].address)
     }

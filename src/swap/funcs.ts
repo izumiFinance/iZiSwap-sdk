@@ -234,7 +234,7 @@ export const getSwapChainWithExactOutputCall = (
     const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []
 
-    const swapCalling = swapContract.methods.swapAmount({
+    const swapCalling = swapContract.methods.swapDesire({
         path,
         recipient: innerRecipientAddress,
         desire: params.outputAmount,
