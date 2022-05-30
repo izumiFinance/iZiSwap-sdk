@@ -1,13 +1,13 @@
 
-import {BaseChain, ChainId, initialChainTable } from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../liquidityManager/view';
-import { amount2Decimal, fetchToken } from '../../base/token/token';
+import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../src/liquidityManager/view';
+import { fetchToken } from '../../src/base/token/token';
 import { BigNumber } from 'bignumber.js'
-import { getAddLiquidityCall, getDecLiquidityCall } from '../../liquidityManager/liquidity';
-import { calciZiLiquidityAmountDesired, getWithdrawLiquidityValue } from '../../liquidityManager/calc';
-import { AddLiquidityParam, DecLiquidityParam } from '../../liquidityManager/types';
+import { getDecLiquidityCall } from '../../src/liquidityManager/liquidity';
+import { getWithdrawLiquidityValue } from '../../src/liquidityManager/calc';
+import { DecLiquidityParam } from '../../src/liquidityManager/types';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -34,49 +34,43 @@ async function main(): Promise<void> {
         chain, 
         web3, 
         liquidityManagerContract,
-        '0xD0B1c02E8A6CA05c7737A3F4a0EEDe075fa4920C',
+        account.address,
         [testA]
     )
     console.log('liquidity len: ', liquidities.length)
     console.log('liquidtys: ', liquidities)
 
-    const liquidity1 = liquidities[1]
+    const liquidity0 = liquidities[0]
 
-    const maxTestA = new BigNumber(100).times(10 ** testA.decimal)
-    const maxTestB = calciZiLiquidityAmountDesired(
-        liquidity1.leftPoint, liquidity1.rightPoint, liquidity1.state.currentPoint,
-        maxTestA, true, testA, testB
+    const decRate = 0.1
+    const originLiquidity = new BigNumber(liquidity0.liquidity)
+    const decLiquidity = originLiquidity.times(decRate)
+
+    const {amountX, amountY} = getWithdrawLiquidityValue(
+        liquidity0,
+        liquidity0.state,
+        decLiquidity
     )
-    console.log('max testA: ', maxTestA.toFixed(0))
-    console.log('max testB: ', maxTestB.toFixed(0))
 
-    const maxTestBDecimal = amount2Decimal(maxTestB, testB)
-
-    console.log('maxTestBDecimal: ', maxTestBDecimal)
-
+    const minAmountX = amountX.times(0.985).toFixed(0)
+    const minAmountY = amountY.times(0.985).toFixed(0)
 
     const gasPrice = '5000000000'
 
-    const {addLiquidityCalling, options} = getAddLiquidityCall(
+    const {decLiquidityCalling, options} = getDecLiquidityCall(
         liquidityManagerContract,
         account.address,
         chain,
         {
-            tokenId: liquidity1.tokenId,
-            tokenA: testA,
-            tokenB: testB,
-            maxAmountA: maxTestA.toFixed(0),
-            maxAmountB: maxTestB.toFixed(0),
-            minAmountA: maxTestA.times(0.985).toFixed(0),
-            minAmountB: maxTestB.times(0.985).toFixed(0),
-        } as AddLiquidityParam,
+            tokenId: liquidity0.tokenId,
+            liquidDelta: decLiquidity.toFixed(0),
+            minAmountX,
+            minAmountY
+        } as DecLiquidityParam,
         gasPrice
     )
 
-
-    // before estimate gas and send transaction, 
-    // make sure you have approve liquidityManagerAddress of token testA and testB
-    const gasLimit = await addLiquidityCalling.estimateGas(options)
+    const gasLimit = await decLiquidityCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 
     // for metamask or other explorer's wallet provider
@@ -92,7 +86,7 @@ async function main(): Promise<void> {
         {
             ...options,
             to: liquidityManagerAddress,
-            data: addLiquidityCalling.encodeABI(),
+            data: decLiquidityCalling.encodeABI(),
             gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
         }, 
         privateKey

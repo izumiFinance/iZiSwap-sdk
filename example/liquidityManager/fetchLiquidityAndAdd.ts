@@ -1,14 +1,13 @@
 
-import {BaseChain, ChainId, initialChainTable, PriceRoundingType} from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { getPointDelta, getPoolContract, getPoolState } from '../../pool/funcs';
-import { getPoolAddress, getLiquidityManagerContract } from '../../liquidityManager/view';
-import { amount2Decimal, fetchToken } from '../../base/token/token';
-import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../base/price';
+import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../src/liquidityManager/view';
+import { amount2Decimal, fetchToken } from '../../src/base/token/token';
 import { BigNumber } from 'bignumber.js'
-import { calciZiLiquidityAmountDesired } from '../../liquidityManager/calc';
-import { getMintCall } from '../../liquidityManager/liquidity';
+import { getAddLiquidityCall, getDecLiquidityCall } from '../../src/liquidityManager/liquidity';
+import { calciZiLiquidityAmountDesired, getWithdrawLiquidityValue } from '../../src/liquidityManager/calc';
+import { AddLiquidityParam, DecLiquidityParam } from '../../src/liquidityManager/types';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -31,32 +30,21 @@ async function main(): Promise<void> {
     const testB = await fetchToken(testBAddress, chain, web3)
     const fee = 2000 // 2000 means 0.2%
 
-    const poolAddress = await getPoolAddress(liquidityManagerContract, testA, testB, fee)
-    const pool = getPoolContract(poolAddress, web3)
+    const liquidities = await fetchLiquiditiesOfAccount(
+        chain, 
+        web3, 
+        liquidityManagerContract,
+        '0xD0B1c02E8A6CA05c7737A3F4a0EEDe075fa4920C',
+        [testA]
+    )
+    console.log('liquidity len: ', liquidities.length)
+    console.log('liquidtys: ', liquidities)
 
-    const state = await getPoolState(pool)
-
-    const point1 = priceDecimal2Point(testA, testB, 0.099870, PriceRoundingType.PRICE_ROUNDING_NEAREST)
-    const point2 = priceDecimal2Point(testA, testB, 0.29881, PriceRoundingType.PRICE_ROUNDING_NEAREST)
-
-    console.log('point1: ', point1)
-    console.log('point2: ', point2)
-
-    const pointDelta = await getPointDelta(pool)
-
-    console.log('pointDelta: ', pointDelta)
-
-    console.log(state)
-
-    const leftPoint = pointDeltaRoundingDown(Math.min(point1, point2), pointDelta)
-    const rightPoint = pointDeltaRoundingUp(Math.max(point1, point2), pointDelta)
-
-    console.log('left point: ', leftPoint)
-    console.log('right point: ', rightPoint)
+    const liquidity1 = liquidities[1]
 
     const maxTestA = new BigNumber(100).times(10 ** testA.decimal)
     const maxTestB = calciZiLiquidityAmountDesired(
-        leftPoint, rightPoint, state.currentPoint,
+        liquidity1.leftPoint, liquidity1.rightPoint, liquidity1.state.currentPoint,
         maxTestA, true, testA, testB
     )
     console.log('max testA: ', maxTestA.toFixed(0))
@@ -66,36 +54,35 @@ async function main(): Promise<void> {
 
     console.log('maxTestBDecimal: ', maxTestBDecimal)
 
-    // esitmate gas
-    const mintParams = {
-        tokenA: testA,
-        tokenB: testB,
-        fee,
-        leftPoint,
-        rightPoint,
-        maxAmountA: maxTestA.toFixed(0),
-        maxAmountB: maxTestB.toFixed(0),
-        minAmountA: maxTestA.times(0.985).toFixed(0),
-        minAmountB: maxTestB.times(0.985).toFixed(0),
-    }
 
     const gasPrice = '5000000000'
 
-    const { mintCalling, options } = getMintCall(
+    const {addLiquidityCalling, options} = getAddLiquidityCall(
         liquidityManagerContract,
         account.address,
         chain,
-        mintParams,
+        {
+            tokenId: liquidity1.tokenId,
+            tokenA: testA,
+            tokenB: testB,
+            maxAmountA: maxTestA.toFixed(0),
+            maxAmountB: maxTestB.toFixed(0),
+            minAmountA: maxTestA.times(0.985).toFixed(0),
+            minAmountB: maxTestB.times(0.985).toFixed(0),
+        } as AddLiquidityParam,
         gasPrice
     )
-    
-    const gasLimit = await mintCalling.estimateGas(options)
+
+
+    // before estimate gas and send transaction, 
+    // make sure you have approve liquidityManagerAddress of token testA and testB
+    const gasLimit = await addLiquidityCalling.estimateGas(options)
     console.log('gas limit: ', gasLimit)
 
     // for metamask or other explorer's wallet provider
     // one can easily use 
     //
-    //    await collectLimitOrderCalling.send({...options, gas: gasLimit})
+    //    await decLiquidityCalling.send({...options, gas: gasLimit})
     //
     // instead of following 
     // 'web3.eth.accounts.signTransaction' 
@@ -105,7 +92,7 @@ async function main(): Promise<void> {
         {
             ...options,
             to: liquidityManagerAddress,
-            data: mintCalling.encodeABI(),
+            data: addLiquidityCalling.encodeABI(),
             gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
         }, 
         privateKey

@@ -1,9 +1,9 @@
 
-import {BaseChain, ChainId, initialChainTable } from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../liquidityManager/view';
-import { fetchToken } from '../../base/token/token';
+import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../src/liquidityManager/view';
+import { fetchToken } from '../../src/base/token/token';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]

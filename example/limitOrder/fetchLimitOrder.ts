@@ -1,10 +1,10 @@
 
-import {BaseChain, ChainId, initialChainTable } from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { fetchToken } from '../../base/token/token';
-import { fetchLimitOrderOfAccount, getLimitOrderManagerContract } from '../../limitOrder/view';
-import { getDecLimOrderCall } from '../../limitOrder/limitOrder';
+import { fetchToken } from '../../src/base/token/token';
+import { fetchLimitOrderOfAccount, getLimitOrderManagerContract } from '../../src/limitOrder/view';
+import { getDecLimOrderCall } from '../../src/limitOrder/limitOrder';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSC]

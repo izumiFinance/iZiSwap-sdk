@@ -1,18 +1,18 @@
 
-import {BaseChain, ChainId, initialChainTable, PriceRoundingType} from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable, PriceRoundingType} from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { getPointDelta, getPoolContract, getPoolState } from '../../pool/funcs';
-import { getPoolAddress, getLiquidityManagerContract } from '../../liquidityManager/view';
-import { amount2Decimal, fetchToken, getErc20TokenContract } from '../../base/token/token';
-import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../base/price';
+import { getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
+import { getPoolAddress, getLiquidityManagerContract } from '../../src/liquidityManager/view';
+import { amount2Decimal, fetchToken, getErc20TokenContract } from '../../src/base/token/token';
+import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price';
 import { BigNumber } from 'bignumber.js'
-import { calciZiLiquidityAmountDesired } from '../../liquidityManager/calc';
-import { getMintCall } from '../../liquidityManager/liquidity';
-import { getQuoterContract, quoterSwapChainWithExactInput } from '../../quoter/funcs';
-import { QuoterSwapChainWithExactInputParams } from '../../quoter/types';
-import { getSwapChainWithExactInputCall, getSwapContract } from '../../swap/funcs';
-import { SwapChainWithExactInputParams } from '../../swap/types';
+import { calciZiLiquidityAmountDesired } from '../../src/liquidityManager/calc';
+import { getMintCall } from '../../src/liquidityManager/liquidity';
+import { getQuoterContract, quoterSwapChainWithExactInput, quoterSwapChainWithExactOutput } from '../../src/quoter/funcs';
+import { QuoterSwapChainWithExactInputParams, QuoterSwapChainWithExactOutputParams } from '../../src/quoter/types';
+import { getSwapChainWithExactOutputCall, getSwapContract } from '../../src/swap/funcs';
+import { SwapChainWithExactOutputParams } from '../../src/swap/types';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -31,27 +31,26 @@ async function main(): Promise<void> {
     const testAAddress = '0xCFD8A067e1fa03474e79Be646c5f6b6A27847399'
     const testBAddress = '0xAD1F11FBB288Cd13819cCB9397E59FAAB4Cdc16F'
 
-    // TokenInfoFormatted of token 'testA' and token 'testB'
     const testA = await fetchToken(testAAddress, chain, web3)
     const testB = await fetchToken(testBAddress, chain, web3)
     const fee = 2000 // 2000 means 0.2%
 
-    const amountA = new BigNumber(50).times(10 ** testA.decimal)
+    const amountB = new BigNumber(10).times(10 ** testA.decimal)
 
     const params = {
         // pay testA to buy testB
         tokenChain: [testA, testB],
         feeChain: [fee],
-        inputAmount: amountA.toFixed(0)
-    } as QuoterSwapChainWithExactInputParams
+        outputAmount: amountB.toFixed(0)
+    } as QuoterSwapChainWithExactOutputParams
 
-    const {outputAmount} = await quoterSwapChainWithExactInput(quoterContract, params)
+    const {inputAmount} = await quoterSwapChainWithExactOutput(quoterContract, params)
 
-    const amountB = outputAmount
-    const amountBDecimal = amount2Decimal(new BigNumber(amountB), testB)
+    const amountA = inputAmount
+    const amountADecimal = amount2Decimal(new BigNumber(amountA), testA)
 
-    console.log(' amountA to pay: ', 50)
-    console.log(' amountB to acquire: ', amountBDecimal)
+    console.log(' amountB to desired: ', 10)
+    console.log(' amountA to pay: ', amountADecimal)
 
     const swapAddress = '0xBd3bd95529e0784aD973FD14928eEDF3678cfad8'
     const swapContract = getSwapContract(swapAddress, web3)
@@ -61,8 +60,8 @@ async function main(): Promise<void> {
     const swapParams = {
         ...params,
         // slippery is 1.5%
-        minOutputAmount: new BigNumber(amountB).times(0.985).toFixed(0)
-    } as SwapChainWithExactInputParams
+        maxInputAmount: new BigNumber(amountA).times(1.015).toFixed(0)
+    } as SwapChainWithExactOutputParams
     
     const gasPrice = '5000000000'
 
@@ -77,7 +76,7 @@ async function main(): Promise<void> {
     console.log('tokenABalanceBeforeSwap: ', tokenABalanceBeforeSwap)
     console.log('tokenBBalanceBeforeSwap: ', tokenBBalanceBeforeSwap)
 
-    const {swapCalling, options} = getSwapChainWithExactInputCall(
+    const {swapCalling, options} = getSwapChainWithExactOutputCall(
         swapContract, 
         account.address, 
         chain, 

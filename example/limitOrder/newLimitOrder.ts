@@ -1,14 +1,14 @@
 
-import {BaseChain, ChainId, initialChainTable, PriceRoundingType } from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable, PriceRoundingType } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { decimal2Amount, fetchToken } from '../../base/token/token'
-import { getDeactiveSlot, getLimitOrderManagerContract, getPoolAddress } from '../../limitOrder/view';
-import { getNewLimOrderCall } from '../../limitOrder/limitOrder';
-import { AddLimOrderParam } from '../../limitOrder/types'
-import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../base/price'
+import { decimal2Amount, fetchToken } from '../../src/base/token/token'
+import { getDeactiveSlot, getLimitOrderManagerContract, getPoolAddress } from '../../src/limitOrder/view';
+import { getNewLimOrderCall } from '../../src/limitOrder/limitOrder';
+import { AddLimOrderParam } from '../../src/limitOrder/types'
+import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price'
 import { BigNumber } from 'bignumber.js'
-import { getPointDelta, getPoolContract } from '../../pool/funcs';
+import { getPointDelta, getPoolContract } from '../../src/pool/funcs';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSC]

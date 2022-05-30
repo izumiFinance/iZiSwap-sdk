@@ -1,13 +1,13 @@
 
-import {BaseChain, ChainId, initialChainTable } from '../../base/types'
-import {privateKey} from '../../../.secret'
+import {BaseChain, ChainId, initialChainTable } from '../../src/base/types'
+import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../liquidityManager/view';
-import { fetchToken, getErc20TokenContract } from '../../base/token/token';
+import { getLiquidityManagerContract, fetchLiquiditiesOfAccount } from '../../src/liquidityManager/view';
+import { fetchToken, getErc20TokenContract } from '../../src/base/token/token';
 import { BigNumber } from 'bignumber.js'
-import { getCollectLiquidityCall, getDecLiquidityCall } from '../../liquidityManager/liquidity';
-import { getWithdrawLiquidityValue } from '../../liquidityManager/calc';
-import { CollectLiquidityParam, DecLiquidityParam } from '../../liquidityManager/types';
+import { getCollectLiquidityCall, getDecLiquidityCall } from '../../src/liquidityManager/liquidity';
+import { getWithdrawLiquidityValue } from '../../src/liquidityManager/calc';
+import { CollectLiquidityParam, DecLiquidityParam } from '../../src/liquidityManager/types';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
