@@ -42,7 +42,7 @@ export const fetchLimitOrderOfAccount = async(
     const activeLimitOrder = getActiveOrderResult.activeLimitOrder
     const deactiveLimitOrder = getDeactiveOrderResult
     const allOrders = [...activeLimitOrder, ...deactiveLimitOrder];
-    if (allOrders.length <= 0) { return; }
+    if (allOrders.length <= 0) { return {activeOrders:[], deactiveOrders:[]}; }
 
     const orderTotal = allOrders.length;
     const activeOrderTotal = activeOrderIdx.length;

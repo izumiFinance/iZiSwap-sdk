@@ -10,11 +10,11 @@ import { calciZiLiquidityAmountDesired, getWithdrawLiquidityValue } from '../../
 import { AddLiquidityParam, DecLiquidityParam } from '../../src/liquidityManager/types';
 
 async function main(): Promise<void> {
-    const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
+    const chain:BaseChain = initialChainTable[ChainId.BSC]
     const rpc = 'https://bsc-dataseed2.defibit.io/'
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
-    console.log('aaaaaaaa')
+
     const account =  web3.eth.accounts.privateKeyToAccount(privateKey)
     console.log('address: ', account.address)
 

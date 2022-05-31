@@ -10,7 +10,7 @@ import { getWithdrawLiquidityValue } from '../../src/liquidityManager/calc';
 import { CollectLiquidityParam, DecLiquidityParam } from '../../src/liquidityManager/types';
 
 async function main(): Promise<void> {
-    const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
+    const chain:BaseChain = initialChainTable[ChainId.BSC]
     const rpc = 'https://bsc-dataseed2.defibit.io/'
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
