@@ -1,9 +1,9 @@
 import Web3 from "web3"
 import { Contract } from 'web3-eth-contract'
-import { fetchToken } from "../base/token/token"
-import { BaseChain, TokenInfoFormatted } from "../base/types"
-import { decodeMethodResult, getEVMContract } from "../base/utils"
-import { poolMetas } from "../liquidityManager/library/decodeParams"
+import { fetchToken } from "../base"
+import { BaseChain, TokenInfoFormatted } from "../base"
+import { decodeMethodResult, getEVMContract } from "../base"
+import { poolMetas } from "../liquidityManager"
 import limitOrderAbi from './abi.json'
 import { LimitOrder } from "./types"
 import { BigNumber } from 'bignumber.js'

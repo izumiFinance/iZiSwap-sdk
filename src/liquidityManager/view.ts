@@ -16,7 +16,7 @@ import {
 import { Liquidity } from "./types"
 import { point2PoolPriceUndecimalSqrt } from "../base/price"
 import { BaseState, State } from "../pool/types"
-import { amount2Decimal, fetchToken } from "../base/token/token"
+import { amount2Decimal, fetchToken } from "../base"
 import { liquidityParams, poolMetas, LiquidityRawParams } from "./library/decodeParams"
 import { getPoolContract, getPoolState } from "../pool/funcs"
 import { getLiquidityValue } from "./calc"

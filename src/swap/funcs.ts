@@ -2,8 +2,10 @@
 import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
-import { BaseChain, buildSendingParams } from '../base/types';
-import { getEVMContract, getTokenChainPath, getTokenChainPathReverse } from '../base/utils';
+
+import {BaseChain, TokenInfoFormatted} from '../base'
+
+import { getEVMContract, getTokenChainPath, getTokenChainPathReverse, buildSendingParams } from '../base';
 
 import swapAbi from './abi.json';
 import { SwapChainWithExactInputParams, SwapChainWithExactOutputParams, SwapSingleWithExactInputParams, SwapSingleWithExactOutputParams } from './types';

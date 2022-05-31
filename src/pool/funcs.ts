@@ -14,14 +14,6 @@ export const getFactoryContract = (address: string, web3: Web3): Contract => {
     return getEVMContract(factoryAbi, address, web3);
 }
 
-export const getPoolAddress = async (
-    factory: Contract, 
-    tokenA: TokenInfoFormatted, 
-    tokenB: TokenInfoFormatted, 
-    fee: number) : Promise<string> => {
-    const poolAddress = await factory.methods.pool(tokenA.address, tokenB.address, fee).call()
-    return poolAddress
-}
 
 export const getPointDelta = async (pool: Contract) : Promise<number> => {
     const pointDelta = Number(await pool.methods.pointDelta().call())

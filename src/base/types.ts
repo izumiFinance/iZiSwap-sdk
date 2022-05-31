@@ -1,7 +1,8 @@
 
 import { Contract } from 'web3-eth-contract'
 
-export declare interface Dictionary<T> {
+
+export interface Dictionary<T> {
     [index: string]: T;
 }
 
