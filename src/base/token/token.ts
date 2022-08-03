@@ -55,3 +55,7 @@ export const fetchToken = async(tokenAddr: string, chain: BaseChain, web3: Web3)
     };
     return tokenInfo;
 }
+
+export const getSwapTokenAddress = (token: TokenInfoFormatted): string => {
+    return token.wrapTokenAddress ?? token.address
+}

@@ -16,7 +16,7 @@ import {
 import { Liquidity } from "./types"
 import { point2PoolPriceUndecimalSqrt } from "../base/price"
 import { BaseState, State } from "../pool/types"
-import { amount2Decimal, fetchToken } from "../base"
+import { amount2Decimal, fetchToken, getSwapTokenAddress } from "../base"
 import { liquidityParams, poolMetas, LiquidityRawParams } from "./library/decodeParams"
 import { getPoolContract, getPoolState } from "../pool/funcs"
 import { getLiquidityValue } from "./calc"
@@ -31,7 +31,11 @@ export const getPoolAddress = async (
     tokenA: TokenInfoFormatted, 
     tokenB: TokenInfoFormatted, 
     fee: number) : Promise<string> => {
-    const poolAddress = await liquidityManagerContract.methods.pool(tokenA.address, tokenB.address, fee).call()
+    const poolAddress = await liquidityManagerContract.methods.pool(
+        getSwapTokenAddress(tokenA), 
+        getSwapTokenAddress(tokenB), 
+        fee
+    ).call()
     return poolAddress
 }
 
@@ -75,8 +79,8 @@ export const fetchLiquiditiesByTokenIds = async (
         const tokenYAddress = poolMetaRaw.tokenY;
         const fee = poolMetaRaw.fee;
         liquidities[i] = { ...liquidities[i], fee };
-        liquidities[i].tokenX = { ...tokenList.find((e) => e.address.toUpperCase() === tokenXAddress.toUpperCase()) } as unknown as any;
-        liquidities[i].tokenY = { ...tokenList.find((e) => e.address.toUpperCase() === tokenYAddress.toUpperCase()) } as unknown as any;
+        liquidities[i].tokenX = { ...tokenList.find((e) => getSwapTokenAddress(e).toUpperCase() === tokenXAddress.toUpperCase()) } as unknown as any;
+        liquidities[i].tokenY = { ...tokenList.find((e) => getSwapTokenAddress(e).toUpperCase() === tokenYAddress.toUpperCase()) } as unknown as any;
         if (!liquidities[i].tokenX.symbol) {
             liquidities[i].tokenX = await fetchToken(tokenXAddress, chain, web3)
         }
@@ -87,7 +91,11 @@ export const fetchLiquiditiesByTokenIds = async (
 
     // TODO set main data first, price later, same farm
     // 5. get pool address
-    const poolAddressMulticallData = liquidities.map((l) => liquidityManagerContract.methods.pool(l.tokenX.address, l.tokenY.address, l.fee).encodeABI());
+    const poolAddressMulticallData = liquidities.map((l) => liquidityManagerContract.methods.pool(
+        getSwapTokenAddress(l.tokenX), 
+        getSwapTokenAddress(l.tokenY), 
+        l.fee
+    ).encodeABI());
     const poolAddressResult: string[] = await liquidityManagerContract.methods.multicall(poolAddressMulticallData).call();
     const poolAddressList = poolAddressResult.map(r => String(web3.eth.abi.decodeParameter('address', r)));
 

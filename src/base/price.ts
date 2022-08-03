@@ -1,6 +1,14 @@
 import { PriceRoundingType, PointRoundingType, TokenInfoFormatted } from "./types"
 import { BigNumber } from 'bignumber.js'
+import { getSwapTokenAddress } from "./token"
 
+/**
+ * transform decimal price to undecimal price
+ * @param tokenA tokenA info in format of [[`TokenInfoFormatted`]], only decimal field is needed
+ * @param tokenB tokenB info in format of [[`TokenInfoFormatted`]], only decimal field is needed
+ * @param priceDecimalAByB decimal-price how much tokenB (decimal amount) for 1 tokenA
+ * @returns undecimal price
+ */
 export const priceDecimal2PriceUndecimal = (
     tokenA: TokenInfoFormatted,
     tokenB: TokenInfoFormatted,
@@ -56,7 +64,7 @@ export const priceDecimal2Point = (
     tokenB: TokenInfoFormatted,
     priceDecimalAByB: number,
     roundingType: PriceRoundingType): number => {
-    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+    if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
         let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
             pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
@@ -82,7 +90,7 @@ export const priceUndecimal2Point = (
     tokenB: TokenInfoFormatted,
     priceUndecimalAByB: number,
     roundingType: PriceRoundingType): number => {
-    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+    if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
         let pointRoundingType = PointRoundingType.POINT_ROUNDING_NEAREST
         if (roundingType === PriceRoundingType.PRICE_ROUNDING_DOWN) {
             pointRoundingType = PointRoundingType.POINT_ROUNDING_DOWN
@@ -112,7 +120,7 @@ export const point2PriceUndecimal = (
     tokenB: TokenInfoFormatted,
     point: number
 ): BigNumber => {
-    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+    if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
         return new BigNumber(1.0001 ** point)
     } else {
         return new BigNumber(1).div(1.0001 ** point)
@@ -120,7 +128,7 @@ export const point2PriceUndecimal = (
 }
 
 export const getTokenXYFromToken = (tokenA: TokenInfoFormatted, tokenB: TokenInfoFormatted): {tokenX: TokenInfoFormatted, tokenY: TokenInfoFormatted} => {
-    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+    if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
         return {
             tokenX: {...tokenA},
             tokenY: {...tokenB}
@@ -143,10 +151,10 @@ export const point2PriceDecimal = (
     const {tokenX, tokenY} = getTokenXYFromToken(tokenA, tokenB)
     if (point > 0) {
         priceDecimal = priceUndecimal2PriceDecimal(tokenX, tokenY, new BigNumber(1.0001 ** point))
-        needReverse = tokenA.address.toLowerCase() > tokenB.address.toLowerCase()
+        needReverse = getSwapTokenAddress(tokenA).toLowerCase() > getSwapTokenAddress(tokenB).toLowerCase()
     } else {
         priceDecimal = priceUndecimal2PriceDecimal(tokenY, tokenX, new BigNumber(1.0001 ** (-point)))
-        needReverse = tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+        needReverse = getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()
     }
     if (needReverse) {
         priceDecimal = 1 / priceDecimal

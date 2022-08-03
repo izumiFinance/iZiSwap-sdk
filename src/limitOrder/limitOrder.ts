@@ -1,4 +1,5 @@
 import { Contract } from 'web3-eth-contract'
+import { getSwapTokenAddress } from '../base/token'
 import { BaseChain, buildSendingParams } from '../base/types'
 import { AddLimOrderParam, CollectLimOrderParam } from './types'
 
@@ -11,8 +12,8 @@ export const getNewLimOrderCall = (
 ): {newLimOrderCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
 
-    let tokenXAddress = params.sellToken.address.toLowerCase()
-    let tokenYAddress = params.earnToken.address.toLowerCase()
+    let tokenXAddress = getSwapTokenAddress(params.sellToken).toLowerCase()
+    let tokenYAddress = getSwapTokenAddress(params.earnToken).toLowerCase()
     let sellXEarnY = true
     if (tokenXAddress > tokenYAddress) {
         sellXEarnY = false
@@ -123,9 +124,9 @@ export const getCollectLimitOrderCall = (
     callings.push(collectCalling)
     if (outputIsChainCoin) {
         callings.push(limitOrderManager.methods.unwrapWETH9('0', finalRecipientAddress))
-        let sweepTokenAddress = params.tokenX.address
+        let sweepTokenAddress = getSwapTokenAddress(params.tokenX)
         if (chain.tokenSymbol === params.tokenX.symbol) {
-            sweepTokenAddress = params.tokenY.address
+            sweepTokenAddress = getSwapTokenAddress(params.tokenY)
         }
         callings.push(limitOrderManager.methods.sweepToken(sweepTokenAddress, '0', finalRecipientAddress))
     }

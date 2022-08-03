@@ -14,7 +14,7 @@ import {
 import { Liquidity } from "./types"
 import { point2PoolPriceUndecimalSqrt } from "../base/price"
 import { BaseState, State } from "../pool/types"
-import { amount2Decimal } from "../base/token/token"
+import { amount2Decimal, getSwapTokenAddress } from "../base/token/token"
 
 
 export const calciZiLiquidityAmountDesired = (
@@ -27,13 +27,13 @@ export const calciZiLiquidityAmountDesired = (
     tokenB: TokenInfoFormatted,
 ): BigNumber => {
     if (amountIsTokenA) {
-        if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+        if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
             return _calciZiLiquidityAmountY(amount, leftPoint, rightPoint, currentPoint);
         } else {
             return _calciZiLiquidityAmountX(amount, leftPoint, rightPoint, currentPoint);
         }
     } else {
-        if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+        if (getSwapTokenAddress(tokenA).toLowerCase() < getSwapTokenAddress(tokenB).toLowerCase()) {
             return _calciZiLiquidityAmountX(amount, leftPoint, rightPoint, currentPoint);
         } else {
             return _calciZiLiquidityAmountY(amount, leftPoint, rightPoint, currentPoint);

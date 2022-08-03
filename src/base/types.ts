@@ -12,6 +12,7 @@ export interface TokenInfoFormatted {
     symbol: string;
     icon: string;
     address: string;
+    wrapTokenAddress?: string;
     decimal: number;
     addTime?: Date;
     custom: boolean;

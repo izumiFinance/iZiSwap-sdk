@@ -1,6 +1,6 @@
 import Web3 from "web3"
 import { Contract } from 'web3-eth-contract'
-import { fetchToken } from "../base"
+import { fetchToken, getSwapTokenAddress } from "../base"
 import { BaseChain, TokenInfoFormatted } from "../base"
 import { decodeMethodResult, getEVMContract } from "../base"
 import { poolMetas } from "../liquidityManager"
@@ -18,7 +18,11 @@ export const getPoolAddress = async (
     tokenA: TokenInfoFormatted, 
     tokenB: TokenInfoFormatted, 
     fee: number) : Promise<string> => {
-    const poolAddress = await limitOrderManager.methods.pool(tokenA.address, tokenB.address, fee).call()
+    const poolAddress = await limitOrderManager.methods.pool(
+        getSwapTokenAddress(tokenA), 
+        getSwapTokenAddress(tokenB), 
+        fee
+    ).call()
     return poolAddress
 }
 
@@ -64,8 +68,8 @@ export const fetchLimitOrderOfAccount = async(
 
     for (let i = 0; i < orderTotal; i ++) {
         const orderPoolMeta = poolMetaList[i]
-        let tokenX = { ...tokenList.find((e) => e.address.toLowerCase() === orderPoolMeta.tokenX.toLowerCase()) } as TokenInfoFormatted;
-        let tokenY = { ...tokenList.find((e) => e.address.toLowerCase() === orderPoolMeta.tokenY.toLowerCase()) } as TokenInfoFormatted;
+        let tokenX = { ...tokenList.find((e) => getSwapTokenAddress(e).toLowerCase() === orderPoolMeta.tokenX.toLowerCase()) } as TokenInfoFormatted;
+        let tokenY = { ...tokenList.find((e) => getSwapTokenAddress(e).toLowerCase() === orderPoolMeta.tokenY.toLowerCase()) } as TokenInfoFormatted;
         if (!tokenX.symbol) {
             tokenX = await fetchToken(orderPoolMeta.tokenX, chain, web3)
         }

@@ -2,6 +2,7 @@ import { Contract } from 'web3-eth-contract'
 import { PromiEvent } from 'web3-core';
 import { BaseChain, buildSendingParams, ChainId } from '../base/types'
 import { AddLiquidityParam, CollectLiquidityParam, DecLiquidityParam, MintParam } from './types'
+import { getSwapTokenAddress } from '../base/token';
 
 export const getMintCall = (
     liquidityManagerContract: Contract,
@@ -11,7 +12,7 @@ export const getMintCall = (
     gasPrice: number | string
 ): {mintCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const ifReverse = params.tokenA.address.toLowerCase() > params.tokenB.address.toLowerCase()
+    const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
         from: account,
@@ -32,8 +33,8 @@ export const getMintCall = (
     if (ifReverse) {
         mintCalling = liquidityManagerContract.methods.mint({
             miner: recipientAddress,
-            tokenX: params.tokenB.address,
-            tokenY: params.tokenA.address,
+            tokenX: getSwapTokenAddress(params.tokenB),
+            tokenY: getSwapTokenAddress(params.tokenA),
             fee: params.fee,
             pl: params.leftPoint,
             pr: params.rightPoint,
@@ -46,8 +47,8 @@ export const getMintCall = (
     } else {
         mintCalling = liquidityManagerContract.methods.mint({
             miner: recipientAddress,
-            tokenX: params.tokenA.address,
-            tokenY: params.tokenB.address,
+            tokenX: getSwapTokenAddress(params.tokenA),
+            tokenY: getSwapTokenAddress(params.tokenB),
             fee: params.fee,
             pl: params.leftPoint,
             pr: params.rightPoint,
@@ -94,7 +95,7 @@ export const getAddLiquidityCall = (
             options.value = params.maxAmountB
         }
     }
-    const ifReverse = params.tokenA.address.toLowerCase() > params.tokenB.address.toLowerCase()
+    const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
     const deadline = params.deadline ?? '0xffffffff'
     const callings = []
     let addLiquidityCalling = undefined
@@ -161,7 +162,7 @@ export const getCollectLiquidityCall = (
     params: CollectLiquidityParam, 
     gasPrice: number | string
 ) : {collectLiquidityCalling: any, options: any} => {
-    const ifReverse = params.tokenA.address.toLowerCase() > params.tokenB.address.toLowerCase()
+    const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
     const strictERC20Token = params.strictERC20Token ?? false
 
     const options = {
@@ -194,9 +195,9 @@ export const getCollectLiquidityCall = (
     callings.push(collectCalling)
     if (outputIsChainCoin) {
         callings.push(liquidityManagerContract.methods.unwrapWETH9('0', finalRecipientAddress))
-        let sweepTokenAddress = params.tokenA.address
+        let sweepTokenAddress = getSwapTokenAddress(params.tokenA)
         if (chain.tokenSymbol === params.tokenA.symbol) {
-            sweepTokenAddress = params.tokenB.address
+            sweepTokenAddress = getSwapTokenAddress(params.tokenB)
         }
         callings.push(liquidityManagerContract.methods.sweepToken(sweepTokenAddress, '0', finalRecipientAddress))
     }

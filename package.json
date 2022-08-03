@@ -29,8 +29,12 @@
     "memoize-one": "^6.0.0",
     "prettier": "^2.6.2",
     "ts-jest": "^28.0.3",
+    "typedoc": "^0.22.17",
     "typescript": "^4.7.2",
     "web3": "^1.7.3"
   },
-  "files": ["src", "lib"]
+  "files": [
+    "src",
+    "lib"
+  ]
 }

@@ -3,6 +3,7 @@ import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
 import { TokenInfoFormatted } from "./types";
 import {BigNumber} from 'bignumber.js'
+import { getSwapTokenAddress } from "./token";
 
 
 export const getEVMContract = (
@@ -50,19 +51,19 @@ export const parallelCollect = async <T>(
 }
 
 export const getTokenChainPath = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
-    let hexString = tokenChain[0].address
+    let hexString = getSwapTokenAddress(tokenChain[0])
     for (let i = 0; i < feeChain.length; i ++) {
         hexString = appendHex(hexString, fee2Hex(feeChain[i]))
-        hexString = appendHex(hexString, tokenChain[i + 1].address)
+        hexString = appendHex(hexString, getSwapTokenAddress(tokenChain[i + 1]))
     }
     return hexString
 }
 
 export const getTokenChainPathReverse = (tokenChain: TokenInfoFormatted[], feeChain: number[]): string => {
-    let hexString = tokenChain[tokenChain.length - 1].address
+    let hexString = getSwapTokenAddress(tokenChain[tokenChain.length - 1])
     for (let i = feeChain.length - 1; i >= 0; i --) {
         hexString = appendHex(hexString, fee2Hex(feeChain[i]))
-        hexString = appendHex(hexString, tokenChain[i].address)
+        hexString = appendHex(hexString, getSwapTokenAddress(tokenChain[i]))
     }
     return hexString
 }

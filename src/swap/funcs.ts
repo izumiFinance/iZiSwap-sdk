@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 
-import {BaseChain, TokenInfoFormatted} from '../base'
+import {BaseChain, getSwapTokenAddress, TokenInfoFormatted} from '../base'
 
 import { getEVMContract, getTokenChainPath, getTokenChainPathReverse, buildSendingParams } from '../base';
 
@@ -22,7 +22,7 @@ export const getSwapSingleWithExactInputCall = (
     gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
+    const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
@@ -43,8 +43,8 @@ export const getSwapSingleWithExactInputCall = (
     let swapCalling = undefined
     if (isX2Y) {
         swapCalling = swapContract.methods.swapX2Y({
-            tokenX: params.inputToken.address,
-            tokenY: params.outputToken.address,
+            tokenX: getSwapTokenAddress(params.inputToken),
+            tokenY: getSwapTokenAddress(params.outputToken),
             fee: params.fee,
             boundaryPt,
             recipient: innerRecipientAddress,
@@ -55,8 +55,8 @@ export const getSwapSingleWithExactInputCall = (
         })
     } else {
         swapCalling = swapContract.methods.swapY2X({
-            tokenX: params.outputToken.address,
-            tokenY: params.inputToken.address,
+            tokenX: getSwapTokenAddress(params.outputToken),
+            tokenY: getSwapTokenAddress(params.inputToken),
             fee: params.fee,
             boundaryPt,
             recipient: innerRecipientAddress,
@@ -71,7 +71,6 @@ export const getSwapSingleWithExactInputCall = (
         callings.push(swapContract.methods.refundETH())
     }
     if (outputIsChainCoin) {
-        // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
@@ -93,7 +92,7 @@ export const getSwapSingleWithExactOutputCall = (
     gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
+    const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     const strictERC20Token = params.strictERC20Token ?? false
     const options = {
@@ -114,8 +113,8 @@ export const getSwapSingleWithExactOutputCall = (
     let swapCalling = undefined
     if (isX2Y) {
         swapCalling = swapContract.methods.swapX2YDesireY({
-            tokenX: params.inputToken.address,
-            tokenY: params.outputToken.address,
+            tokenX: getSwapTokenAddress(params.inputToken),
+            tokenY: getSwapTokenAddress(params.outputToken),
             fee: params.fee,
             boundaryPt,
             recipient: innerRecipientAddress,
@@ -126,8 +125,8 @@ export const getSwapSingleWithExactOutputCall = (
         })
     } else {
         swapCalling = swapContract.methods.swapY2XDesireX({
-            tokenX: params.outputToken.address,
-            tokenY: params.inputToken.address,
+            tokenX: getSwapTokenAddress(params.outputToken),
+            tokenY: getSwapTokenAddress(params.inputToken),
             fee: params.fee,
             boundaryPt,
             recipient: innerRecipientAddress,
@@ -142,7 +141,6 @@ export const getSwapSingleWithExactOutputCall = (
         callings.push(swapContract.methods.refundETH())
     }
     if (outputIsChainCoin) {
-        // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {
@@ -248,7 +246,6 @@ export const getSwapChainWithExactOutputCall = (
         callings.push(swapContract.methods.refundETH())
     }
     if (outputIsChainCoin) {
-        // callings.push(swapContract.methods.sweepToken(params.inputToken.address, '0', account))
         callings.push(swapContract.methods.unwrapWETH9('0', finalRecipientAddress))
     }
     if (callings.length === 1) {

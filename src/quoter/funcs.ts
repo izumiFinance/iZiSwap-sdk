@@ -2,6 +2,7 @@
 import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
+import { getSwapTokenAddress } from '../base';
 import { BaseChain, buildSendingParams } from '../base/types';
 import { getEVMContract, getTokenChainPath, getTokenChainPathReverse } from '../base/utils';
 
@@ -18,13 +19,13 @@ export const quoterSwapSingleWithExactInput = async (
     // chain: BaseChain,
     params: QuoterSwapSingleWithExactInputParams
 ) : Promise<{outputAmount: string, finalPoint: number}> => {
-    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
+    const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     
     if (isX2Y) {
         const {amountY, finalPoint} = await quoterContract.methods.swapX2Y(
-            params.inputToken.address,
-            params.outputToken.address,
+            getSwapTokenAddress(params.inputToken),
+            getSwapTokenAddress(params.outputToken),
             params.fee,
             params.inputAmount,
             boundaryPt
@@ -35,8 +36,8 @@ export const quoterSwapSingleWithExactInput = async (
         }
     } else {
         const {amountX, finalPoint} = await quoterContract.methods.swapY2X(
-            params.outputToken.address,
-            params.inputToken.address,
+            getSwapTokenAddress(params.outputToken),
+            getSwapTokenAddress(params.inputToken),
             params.fee,
             params.inputAmount,
             boundaryPt
@@ -54,13 +55,13 @@ export const quoterSwapSingleWithExactOutput = async (
     // chain: BaseChain,
     params: QuoterSwapSingleWithExactOutputParams
 ) : Promise<{inputAmount: string, finalPoint: number}> => {
-    const isX2Y = params.inputToken.address.toLowerCase() < params.outputToken.address.toLowerCase()
+    const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
     
     if (isX2Y) {
         const {amountX, finalPoint} = await quoterContract.methods.swapX2YDesireY(
-            params.inputToken.address,
-            params.outputToken.address,
+            getSwapTokenAddress(params.inputToken),
+            getSwapTokenAddress(params.outputToken),
             params.fee,
             params.outputAmount,
             boundaryPt
@@ -71,8 +72,8 @@ export const quoterSwapSingleWithExactOutput = async (
         }
     } else {
         const {amountY, finalPoint} = await quoterContract.methods.swapY2XDesireX(
-            params.outputToken.address,
-            params.inputToken.address,
+            getSwapTokenAddress(params.outputToken),
+            getSwapTokenAddress(params.inputToken),
             params.fee,
             params.outputAmount,
             boundaryPt

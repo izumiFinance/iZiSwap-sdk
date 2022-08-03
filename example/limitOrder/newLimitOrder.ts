@@ -2,7 +2,7 @@
 import {BaseChain, ChainId, initialChainTable, PriceRoundingType } from '../../src/base/types'
 import {privateKey} from '../../.secret'
 import Web3 from 'web3';
-import { decimal2Amount, fetchToken } from '../../src/base/token/token'
+import { decimal2Amount, fetchToken, getSwapTokenAddress } from '../../src/base/token/token'
 import { getDeactiveSlot, getLimitOrderManagerContract, getPoolAddress } from '../../src/limitOrder/view';
 import { getNewLimOrderCall } from '../../src/limitOrder/limitOrder';
 import { AddLimOrderParam } from '../../src/limitOrder/types'
@@ -46,7 +46,7 @@ async function main(): Promise<void> {
     let sellPointRoundingPointDelta = sellPoint
     console.log('sell token address: ', sellToken.address)
     console.log('earn token address: ', earnToken.address)
-    if (sellToken.address.toLowerCase() < earnToken.address.toLowerCase()) {
+    if (getSwapTokenAddress(sellToken).toLowerCase() < getSwapTokenAddress(earnToken).toLowerCase()) {
         sellPointRoundingPointDelta = pointDeltaRoundingDown(sellPointRoundingPointDelta, pointDelta)
     } else {
         sellPointRoundingPointDelta = pointDeltaRoundingUp(sellPointRoundingPointDelta, pointDelta)
