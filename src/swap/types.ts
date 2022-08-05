@@ -43,9 +43,9 @@ export interface SwapChainWithExactInputParams {
     // fee / 1e6 is feeTier
     // 3000 means 0.3%
     feeChain: number[];
-    // 10-decimal format number, like 100, 150000, ...
+    // 10-decimal format integer number, like 100, 150000, ...
     // or hex format number start with '0x'
-    // amount = inputAmount / (10 ** inputToken.decimal)
+    // decimal amount = inputAmount / (10 ** inputToken.decimal)
     inputAmount: string;
     minOutputAmount: string;
     recipient?: string;
