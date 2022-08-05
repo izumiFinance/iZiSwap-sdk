@@ -204,6 +204,7 @@ export const getDecLiquidityAndCollectCall = (
 
     const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
 
+    const deadline = params.deadline ?? '0xffffffff'
     const recipientAddress = params.recipient ?? account
     let calling = undefined
     if (ifReverse) {
@@ -215,6 +216,7 @@ export const getDecLiquidityAndCollectCall = (
             params.liquidDelta,
             params.minAmountB,
             params.minAmountA,
+            deadline,
             getSwapTokenAddress(params.tokenB),
             getSwapTokenAddress(params.tokenA),
             tokenXIsWrap,
@@ -229,6 +231,7 @@ export const getDecLiquidityAndCollectCall = (
             params.liquidDelta,
             params.minAmountA,
             params.minAmountB,
+            deadline,
             getSwapTokenAddress(params.tokenA),
             getSwapTokenAddress(params.tokenB),
             tokenXIsWrap,
