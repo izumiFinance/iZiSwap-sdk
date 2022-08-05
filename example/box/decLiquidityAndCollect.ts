@@ -48,15 +48,16 @@ async function main(): Promise<void> {
     const liquidityManagerContract = getLiquidityManagerContract(liquidityManagerAddress, web3)
 
     const tokenId = '121'
-    const liquidityRaw = liquidityManagerContract.methods.liquidities(tokenId).call()
-
+    const liquidityRaw = await liquidityManagerContract.methods.liquidities(tokenId).call()
+    console.log('liquidityRaw: ', liquidityRaw)
     const liquidity = {
         leftPoint: Number(liquidityRaw.leftPt),
         rightPoint: Number(liquidityRaw.rightPt),
-        liquidity: liquidityRaw.liquidity,
+        liquidity: liquidityRaw.liquidity.toString(),
         tokenX: getSwapTokenAddress(feeB).toLowerCase() < getSwapTokenAddress(wBNB).toLocaleLowerCase() ? {...feeB} : {...wBNB},
         tokenY: getSwapTokenAddress(feeB).toLowerCase() > getSwapTokenAddress(wBNB).toLocaleLowerCase() ? {...feeB} : {...wBNB},
-    } as Liquidity
+	} as Liquidity
+    console.log('liquidity: ', liquidity)
 
     const liquidityDelta = new BigNumber(liquidity.liquidity).div(10)
 
