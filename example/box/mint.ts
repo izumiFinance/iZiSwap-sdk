@@ -53,10 +53,10 @@ async function main(): Promise<void> {
     const pool = getPoolContract(poolAddress, web3)
 
     const state = await getPoolState(pool)
+    console.log('state: ', state)
 
-
-    const point1 = priceDecimal2Point(feeB, wBNB, 0.8, PriceRoundingType.PRICE_ROUNDING_NEAREST)
-    const point2 = priceDecimal2Point(feeB, wBNB, 1.2, PriceRoundingType.PRICE_ROUNDING_NEAREST)
+    const point1 = priceDecimal2Point(feeB, wBNB, 1.6, PriceRoundingType.PRICE_ROUNDING_NEAREST)
+    const point2 = priceDecimal2Point(feeB, wBNB, 2.4, PriceRoundingType.PRICE_ROUNDING_NEAREST)
 
     console.log('point1: ', point1)
     console.log('point2: ', point2)
@@ -98,7 +98,7 @@ async function main(): Promise<void> {
         minAmountB: maxWBNB.times(0.8).toFixed(0),
     }
 
-    const gasPrice = '5000000000'
+    const gasPrice = '15000000000'
 
     const { mintCalling, options } = getMintCall(
         boxContract,
