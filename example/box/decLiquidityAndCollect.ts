@@ -6,7 +6,7 @@ import { getPointDelta, getPoolContract, getPoolState } from '../../src/pool/fun
 import { amount2Decimal, fetchToken, getSwapTokenAddress } from '../../src/base/token/token';
 import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price';
 import { BigNumber } from 'bignumber.js'
-import { calciZiLiquidityAmountDesired, getLiquidityManagerContract, getPoolAddress, getWithdrawLiquidityValue } from '../../src/liquidityManager';
+import { calciZiLiquidityAmountDesired, getLiquidityManagerContract, getPoolAddress, getWithdrawLiquidityValue, Liquidity } from '../../src/liquidityManager';
 import { getBoxContract, getAddLiquidityCall, AddLiquidityParams, DecLiquidityAndCollectParams, getDecLiquidityAndCollectCall } from '../../src/box';
 
 async function main(): Promise<void> {
@@ -48,7 +48,15 @@ async function main(): Promise<void> {
     const liquidityManagerContract = getLiquidityManagerContract(liquidityManagerAddress, web3)
 
     const tokenId = '121'
-    const liquidity = liquidityManagerContract.methods.liquidities(tokenId).call()
+    const liquidityRaw = liquidityManagerContract.methods.liquidities(tokenId).call()
+
+    const liquidity = {
+        leftPoint: Number(liquidityRaw.leftPt),
+        rightPoint: Number(liquidityRaw.rightPt),
+        liquidity: liquidityRaw.liquidity,
+        tokenX: getSwapTokenAddress(feeB).toLowerCase() < getSwapTokenAddress(wBNB).toLocaleLowerCase() ? {...feeB} : {...wBNB},
+        tokenY: getSwapTokenAddress(feeB).toLowerCase() > getSwapTokenAddress(wBNB).toLocaleLowerCase() ? {...feeB} : {...wBNB},
+    } as Liquidity
 
     const liquidityDelta = new BigNumber(liquidity.liquidity).div(10)
 
