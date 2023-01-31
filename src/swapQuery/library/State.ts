@@ -7,6 +7,8 @@ export namespace SwapQuery {
         currentPoint: number
         liquidity: JSBI
         liquidityX: JSBI
+        // feeScaleX_128: JSBI
+        // feeScaleY_128: JSBI
     }
 
 }
