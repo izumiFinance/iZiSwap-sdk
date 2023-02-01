@@ -38,5 +38,8 @@
   "files": [
     "src",
     "lib"
-  ]
+  ],
+  "dependencies": {
+    "http": "^0.0.1-security"
+  }
 }
