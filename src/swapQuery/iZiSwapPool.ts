@@ -1,12 +1,10 @@
 import JSBI from "jsbi"
+import { Consts } from "./library/consts"
 import { Orders } from "./library/Orders"
 import { SwapQuery } from "./library/State"
 
 export class iZiSwapPool {
     
-    private readonly LEFT_MOST_PT: number
-    private readonly RIGHT_MOST_PT: number
-
     private readonly _state: SwapQuery.State
     public readonly orders: Orders.Orders
 
@@ -27,14 +25,12 @@ export class iZiSwapPool {
         pointDelta: number,
         fee: number,
     ) {
-        this.LEFT_MOST_PT = -800000
-        this.RIGHT_MOST_PT = 800000
-        this.leftMostPt = this.LEFT_MOST_PT
-        this.rightMostPt = this.RIGHT_MOST_PT
-        this._state = state
+        this._state = {...state}
+        this.orders = orders
         this.sqrtRate_96 = sqrtRate_96
         this.pointDelta = pointDelta
-        this.orders = orders
+        this.rightMostPt = Math.floor(Consts.RIGHT_MOST_PT / this.pointDelta) * this.pointDelta
+        this.leftMostPt = -this.rightMostPt
         this.fee = fee
     }
 
