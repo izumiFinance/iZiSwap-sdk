@@ -119,19 +119,19 @@ export const getLimitOrders = async (pool: Contract, leftPoint: number, rightPoi
         for (let j = 0; j < rawData.length; j ++) {
             const sellingXStr = rawData[j].sellingX.toString()
             const sellingYStr = rawData[j].sellingY.toString()
-            if (sellingXStr !== '0' || i === leftPointRoundDown && j === 0) {
-                sellingX.push(JSBI.BigInt(sellingXStr))
-                sellingXPoint.push(start + j * pointDelta)
-            }
-            if (sellingYStr !== '0') {
+            if (sellingYStr !== '0' || i === leftPointRoundDown && j === 0) {
                 sellingY.push(JSBI.BigInt(sellingYStr))
                 sellingYPoint.push(start + j * pointDelta)
             }
+            if (sellingXStr !== '0') {
+                sellingX.push(JSBI.BigInt(sellingXStr))
+                sellingXPoint.push(start + j * pointDelta)
+            }
         }
     }
-    if (sellingYPoint[sellingYPoint.length - 1] < realRightRoundUp) {
-        sellingY.push(JSBI.BigInt(0))
-        sellingYPoint.push(realRightRoundUp)
+    if (sellingXPoint[sellingXPoint.length - 1] < realRightRoundUp) {
+        sellingX.push(JSBI.BigInt(0))
+        sellingXPoint.push(realRightRoundUp)
     }
     return {
         sellingX,
