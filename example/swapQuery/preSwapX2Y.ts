@@ -4,7 +4,7 @@ import {privateKey} from '../../.secret'
 import Web3 from 'web3';
 import http, { AgentOptions } from 'http'
 import https from 'https'
-import { getLiquidities, getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
+import { getLiquidities, getLimitOrders, getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
 import { getPoolAddress, getLiquidityManagerContract } from '../../src/liquidityManager/view';
 import { amount2Decimal, fetchToken, getErc20TokenContract } from '../../src/base/token/token';
 import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price';
@@ -61,10 +61,17 @@ async function main(): Promise<void> {
     const rightPoint = state.currentPoint + 5000
     const batchsize = 2000
 
-    const ret = await getLiquidities(poolContract, leftPoint, rightPoint, state.currentPoint, pointDelta, state.liquidity, batchsize)
+    const liquidityData = await getLiquidities(poolContract, leftPoint, rightPoint, state.currentPoint, pointDelta, state.liquidity, batchsize)
 
-    console.log('ret.liquidities: ', ret.liquidities)
-    console.log('ret.point: ', ret.point)
+    console.log('liquidityData.liquidities: ', liquidityData.liquidities)
+    console.log('liquidityData.point: ', liquidityData.point)
+
+    const limitOrderData = await getLimitOrders(poolContract, leftPoint, rightPoint, pointDelta, batchsize)
+
+    console.log('limitOrderData.sellingX: ', limitOrderData.sellingX)
+    console.log('limitOrderData.sellingXPoint: ', limitOrderData.sellingXPoint)
+    console.log('limitOrderData.sellingY: ', limitOrderData.sellingY)
+    console.log('limitOrderData.sellingYPoint: ', limitOrderData.sellingYPoint)
 
 }
 
