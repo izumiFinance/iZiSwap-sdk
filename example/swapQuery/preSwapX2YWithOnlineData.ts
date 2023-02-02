@@ -68,9 +68,9 @@ async function main(): Promise<void> {
 
     const limitOrderData = await getLimitOrders(poolContract, leftPoint, rightPoint, pointDelta, batchsize)
 
-    console.log('limitOrderData.sellingX: ', limitOrderData.sellingX)
+    console.log('limitOrderData.sellingX: ', limitOrderData.sellingX.map((e:JSBI)=>e.toString()))
     console.log('limitOrderData.sellingXPoint: ', limitOrderData.sellingXPoint)
-    console.log('limitOrderData.sellingY: ', limitOrderData.sellingY)
+    console.log('limitOrderData.sellingY: ', limitOrderData.sellingY.map((e:JSBI)=>e.toString()))
     console.log('limitOrderData.sellingYPoint: ', limitOrderData.sellingYPoint)
 
     const orders: Orders.Orders = {
