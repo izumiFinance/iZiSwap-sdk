@@ -4,7 +4,7 @@ import {privateKey} from '../../.secret'
 import Web3 from 'web3';
 import http, { AgentOptions } from 'http'
 import https from 'https'
-import { getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
+import { getLiquidities, getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
 import { getPoolAddress, getLiquidityManagerContract } from '../../src/liquidityManager/view';
 import { amount2Decimal, fetchToken, getErc20TokenContract } from '../../src/base/token/token';
 import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price';
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
     const BNB = await fetchToken(BNBAddress, chain, web3)
     const fee = 2000 // 2000 means 0.2%
 
-    const poolAddress = await getPoolAddress(liquidityManagerContract, iZi, BNB, 2000)
+    const poolAddress = await getPoolAddress(liquidityManagerContract, iZi, BNB, fee)
 
     const tokenXAddress = iZiAddress < BNBAddress ? iZiAddress : BNBAddress
     const tokenYAddress = iZiAddress < BNBAddress ? BNBAddress : iZiAddress
@@ -52,6 +52,19 @@ async function main(): Promise<void> {
     const state = await getPoolState(poolContract)
 
     console.log('state: ', state)
+
+    const pointDelta = await getPointDelta(poolContract)
+
+    console.log('pointDelta: ', pointDelta)
+
+    const leftPoint = state.currentPoint - 5000
+    const rightPoint = state.currentPoint + 5000
+    const batchsize = 2000
+
+    const ret = await getLiquidities(poolContract, leftPoint, rightPoint, state.currentPoint, pointDelta, state.liquidity, batchsize)
+
+    console.log('ret.liquidities: ', ret.liquidities)
+    console.log('ret.point: ', ret.point)
 
 }
 
