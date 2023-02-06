@@ -63,7 +63,7 @@ async function main(): Promise<void> {
 
     const liquidityData = await getLiquidities(poolContract, leftPoint, rightPoint, state.currentPoint, pointDelta, state.liquidity, batchsize)
 
-    console.log('liquidityData.liquidities: ', liquidityData.liquidities)
+    console.log('liquidityData.liquidities: ', liquidityData.liquidities.map((e:JSBI)=>e.toString()))
     console.log('liquidityData.point: ', liquidityData.point)
 
     const limitOrderData = await getLimitOrders(poolContract, leftPoint, rightPoint, pointDelta, batchsize)
