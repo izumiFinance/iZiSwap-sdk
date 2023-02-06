@@ -24,7 +24,10 @@ export namespace SwapY2XModule {
         const fee = JSBI.BigInt(pool.fee)
         const feeRemain = JSBI.BigInt(1e6 - pool.fee)
 
+        let count = 0
+
         while (st.currentPoint < highPt && !finished) {
+            count += 1
             if (currentCursor.isLimitOrderPoint) {
                 const amountNoFee = MulDivMath.mulDivFloor(amount, feeRemain, Consts.ONE_M)
                 if (JSBI.greaterThan(amountNoFee, Consts.ZERO)) {

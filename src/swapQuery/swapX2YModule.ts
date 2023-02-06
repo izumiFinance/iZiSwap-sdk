@@ -19,7 +19,8 @@ export namespace SwapX2YModule {
         // const currFeeScaleX_128 = st.feeScaleX_128
         // const currFeeScaleY_128 = st.feeScaleY_128
         let finished = false
-        const sqrtRate_96 = st.sqrtPrice_96
+        const sqrtRate_96 = pool.sqrtRate_96
+        // console.log('sqrt rate')
         const pointDelta = pool.pointDelta
         let currentCursor = Orders.findLeftCursor(pool.orders, st.currentPoint)
 
@@ -93,6 +94,7 @@ export namespace SwapX2YModule {
             if (finished || st.currentPoint < lowPt) {
                 break
             }
+            currentCursor = Orders.findLeftFromCursor(pool.orders, currentCursor, searchStart)
             const nextPt = Math.max(lowPt, Orders.nearestLeftOneOrBoundary(pool.orders, currentCursor, searchStart, pointDelta))
             if (JSBI.equal(st.liquidity, Consts.ZERO)) {
                 st.currentPoint = nextPt
@@ -144,7 +146,7 @@ export namespace SwapX2YModule {
         // const currFeeScaleX_128 = st.feeScaleX_128
         // const currFeeScaleY_128 = st.feeScaleY_128
         let finished = false
-        const sqrtRate_96 = st.sqrtPrice_96
+        const sqrtRate_96 = pool.sqrtRate_96
         const pointDelta = pool.pointDelta
         let currentCursor = Orders.findLeftCursor(pool.orders, st.currentPoint)
 
@@ -200,6 +202,7 @@ export namespace SwapX2YModule {
             if (finished || st.currentPoint < lowPt) {
                 break
             }
+            currentCursor = Orders.findLeftFromCursor(pool.orders, currentCursor, searchStart)
             const nextPt = Math.max(lowPt, Orders.nearestLeftOneOrBoundary(pool.orders, currentCursor, searchStart, pointDelta))
             if (JSBI.equal(st.liquidity, Consts.ZERO)) {
                 st.currentPoint = nextPt
