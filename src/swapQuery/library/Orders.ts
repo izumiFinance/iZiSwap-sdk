@@ -98,6 +98,17 @@ export namespace Orders {
         return (highPt <= orders.liquidityDeltaPoint[liquidityNum - 1] && highPt <= orders.sellingXPoint[sellingNum - 1])
     }
 
+    export function coverCurrentPoint(orders: Orders, currentPt: number): boolean {
+        if (currentPt < orders.liquidityDeltaPoint[0]) {
+            return false
+        }
+        const liquidityNum = orders.liquidityDeltaPoint.length
+        if (currentPt > orders.liquidityDeltaPoint[liquidityNum - 1]) {
+            return false
+        }
+        return true
+    }
+
     export function nearestLeftOneOrBoundary(
         orders: Orders,
         currentCursor: Cursor,
