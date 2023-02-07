@@ -15,7 +15,7 @@ function getDataPair(point: number, data: number | string | JSBI): DataPair {
 }
 
 describe("test swapY2X", ()=>{
-    test('test swapY2X liquidity and limit order', () => {
+    test('test swapY2X liquidity and limit order long range, end with partial liquidity', () => {
         const liquidityData = [
             getDataPair(-4000, 100000),
             // -2800
@@ -165,6 +165,323 @@ describe("test swapY2X", ()=>{
         const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
 
         const {amountX, amountY} = SwapY2XModule.swapY2X(pool, totalCostY, highPoint)
+
+        expect(amountX.toString()).toBe(totalAcquireX.toString())
+        expect(amountY.toString()).toBe(totalCostY.toString())
+
+    });
+
+    test('test swapY2X liquidity and limit order, end with partial limit order', () => {
+        const liquidityData = [
+            getDataPair(1000, 200000),
+            // 2400
+            getDataPair(3600, 0),
+        ]
+
+        const liquidityX = JSBI.BigInt('200000')
+        const liquidity = JSBI.BigInt('200000')
+        const currentPoint = 2000
+
+        const costYInRange = [
+            calc.yInRange('200000', 2000, 2400, 1.0001, true),
+        ]
+        
+        const acquireXInRange = [
+            calc.xInRange('200000', 2000, 2400, 1.0001, false),
+        ]
+
+        const sellingYData = [] as DataPair[]
+        const sellingXData = [
+            getDataPair(2400, '1000000000000'),
+            getDataPair(4000, '0')
+        ]
+
+        const highPoint = 3600
+
+        const desireXAtM2400 = JSBI.divide(sellingXData[0].data, JSBI.BigInt(11))
+        const costYAtM2400 = calc.getCostYFromXAtPoint(2400, desireXAtM2400)
+        const acquireXAtM2400 = calc.getEarnXFromYAtPoint(2400, costYAtM2400)
+
+        const acquireX = [...acquireXInRange, 
+            acquireXAtM2400
+        ]
+
+        const costY = [...costYInRange,
+            costYAtM2400
+        ]
+
+        const totalAcquireX = calc.getSum(acquireX)
+        const totalCostY = calc.amountListAddFee(costY, JSBI.BigInt(2000))
+
+        const orders: Orders.Orders = {
+            liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
+            liquidity: liquidityData.map((e: DataPair)=>e.data),
+            sellingX: sellingXData.map((e: DataPair)=>e.data),
+            sellingXPoint: sellingXData.map((e: DataPair)=>e.point),
+            sellingY: sellingYData.map((e: DataPair)=>e.data),
+            sellingYPoint: sellingYData.map((e: DataPair)=>e.point)
+        }
+        const state: SwapQuery.State = {
+            currentPoint,
+            sqrtPrice_96: LogPowMath.getSqrtPrice(currentPoint),
+            liquidity,
+            liquidityX
+        }
+        const sqrtRate_96 = LogPowMath.getSqrtPrice(1)
+        const pointDelta = 40
+        const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
+
+        const {amountX, amountY} = SwapY2XModule.swapY2X(pool, totalCostY, highPoint)
+
+        expect(amountX.toString()).toBe(totalAcquireX.toString())
+        expect(amountY.toString()).toBe(totalCostY.toString())
+
+    });
+
+    test('test swapY2X liquidity and limit order, start with zero liquidityX, end with full limit order', () => {
+        const liquidityData = [
+            getDataPair(1000, 200000),
+            // 2400
+            getDataPair(3600, 0),
+        ]
+
+        const liquidityX = JSBI.BigInt('0')
+        const liquidity = JSBI.BigInt('200000')
+        const currentPoint = 2000
+
+        const costYInRange = [
+            calc.yInRange('200000', 2001, 2400, 1.0001, true),
+        ]
+        
+        const acquireXInRange = [
+            calc.xInRange('200000', 2001, 2400, 1.0001, false),
+        ]
+
+        const sellingYData = [] as DataPair[]
+        const sellingXData = [
+            getDataPair(2400, '1000000000000'),
+            getDataPair(4000, '0')
+        ]
+
+        const highPoint = 3600
+
+        const acquireXAtM2400 = sellingXData[0].data
+        const costYAtM2400 = calc.getCostYFromXAtPoint(2400, acquireXAtM2400)
+
+        const acquireX = [...acquireXInRange, 
+            acquireXAtM2400
+        ]
+
+        const costY = [...costYInRange,
+            costYAtM2400
+        ]
+
+        const totalAcquireX = calc.getSum(acquireX)
+        const totalCostY = calc.amountListAddFee(costY, JSBI.BigInt(2000))
+
+        const orders: Orders.Orders = {
+            liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
+            liquidity: liquidityData.map((e: DataPair)=>e.data),
+            sellingX: sellingXData.map((e: DataPair)=>e.data),
+            sellingXPoint: sellingXData.map((e: DataPair)=>e.point),
+            sellingY: sellingYData.map((e: DataPair)=>e.data),
+            sellingYPoint: sellingYData.map((e: DataPair)=>e.point)
+        }
+        const state: SwapQuery.State = {
+            currentPoint,
+            sqrtPrice_96: LogPowMath.getSqrtPrice(currentPoint),
+            liquidity,
+            liquidityX
+        }
+        const sqrtRate_96 = LogPowMath.getSqrtPrice(1)
+        const pointDelta = 40
+        const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
+
+        const {amountX, amountY} = SwapY2XModule.swapY2X(pool, totalCostY, highPoint)
+
+        expect(amountX.toString()).toBe(totalAcquireX.toString())
+        expect(amountY.toString()).toBe(totalCostY.toString())
+
+    });
+
+    test('test swapY2X liquidity, start with zero liquidityX, end with full liquidity', () => {
+        const liquidityData = [
+            getDataPair(1000, 200000),
+            getDataPair(2400, 300000),
+            getDataPair(3600, 0),
+        ]
+
+        const liquidityX = JSBI.BigInt('0')
+        const liquidity = JSBI.BigInt('200000')
+        const currentPoint = 2000
+
+        const costYInRange = [
+            calc.yInRange('200000', 2001, 2400, 1.0001, true),
+        ]
+        
+        const acquireXInRange = [
+            calc.xInRange('200000', 2001, 2400, 1.0001, false),
+        ]
+
+        const sellingYData = [] as DataPair[]
+        const sellingXData = [
+            getDataPair(4000, '0')
+        ]
+
+        const highPoint = 3600
+
+        const acquireX = [...acquireXInRange]
+
+        const costY = [...costYInRange]
+
+        const totalAcquireX = calc.getSum(acquireX)
+        const totalCostY = calc.amountListAddFee(costY, JSBI.BigInt(2000))
+
+        const orders: Orders.Orders = {
+            liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
+            liquidity: liquidityData.map((e: DataPair)=>e.data),
+            sellingX: sellingXData.map((e: DataPair)=>e.data),
+            sellingXPoint: sellingXData.map((e: DataPair)=>e.point),
+            sellingY: sellingYData.map((e: DataPair)=>e.data),
+            sellingYPoint: sellingYData.map((e: DataPair)=>e.point)
+        }
+        const state: SwapQuery.State = {
+            currentPoint,
+            sqrtPrice_96: LogPowMath.getSqrtPrice(currentPoint),
+            liquidity,
+            liquidityX
+        }
+        const sqrtRate_96 = LogPowMath.getSqrtPrice(1)
+        const pointDelta = 40
+        const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
+
+        const {amountX, amountY} = SwapY2XModule.swapY2X(pool, totalCostY, highPoint)
+
+        expect(amountX.toString()).toBe(totalAcquireX.toString())
+        expect(amountY.toString()).toBe(totalCostY.toString())
+
+    });
+
+    test('test swapY2X liquidity, end with highPt', () => {
+        const liquidityData = [
+            getDataPair(1000, 200000),
+            getDataPair(3600, 0),
+        ]
+
+        const liquidityX = JSBI.BigInt('20000')
+        const liquidity = JSBI.BigInt('200000')
+        const currentPoint = 2000
+
+        const costYInRange = [
+            JSBI.add(
+                calc.l2Y(liquidityX, LogPowMath.getSqrtPrice(2000), true),
+                calc.yInRange('200000', 2001, 2400, 1.0001, true)
+            )
+        ]
+        
+        const acquireXInRange = [
+            JSBI.add(
+                calc.l2X(liquidityX, LogPowMath.getSqrtPrice(2000), false),
+                calc.xInRange('200000', 2001, 2400, 1.0001, false)
+            )
+        ]
+
+        const sellingYData = [] as DataPair[]
+        const sellingXData = [
+            getDataPair(4000, '0')
+        ]
+
+        const highPoint = 2400
+
+        const acquireX = [...acquireXInRange]
+
+        const costY = [...costYInRange]
+
+        const totalAcquireX = calc.getSum(acquireX)
+        const totalCostY = calc.amountListAddFee(costY, JSBI.BigInt(2000))
+
+        const orders: Orders.Orders = {
+            liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
+            liquidity: liquidityData.map((e: DataPair)=>e.data),
+            sellingX: sellingXData.map((e: DataPair)=>e.data),
+            sellingXPoint: sellingXData.map((e: DataPair)=>e.point),
+            sellingY: sellingYData.map((e: DataPair)=>e.data),
+            sellingYPoint: sellingYData.map((e: DataPair)=>e.point)
+        }
+        const state: SwapQuery.State = {
+            currentPoint,
+            sqrtPrice_96: LogPowMath.getSqrtPrice(currentPoint),
+            liquidity,
+            liquidityX
+        }
+        const sqrtRate_96 = LogPowMath.getSqrtPrice(1)
+        const pointDelta = 40
+        const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
+        const veryBigNumber = JSBI.BigInt('100000000000000000000000000000')
+
+        const {amountX, amountY} = SwapY2XModule.swapY2X(pool, veryBigNumber, highPoint)
+
+        expect(amountX.toString()).toBe(totalAcquireX.toString())
+        expect(amountY.toString()).toBe(totalCostY.toString())
+
+    });
+
+    test('test swapY2X liquidity and limit order, highPt = currentPt + 1', () => {
+        const liquidityData = [
+            getDataPair(1000, 200000),
+            getDataPair(3600, 0),
+        ]
+
+        const liquidityX = JSBI.BigInt('20000')
+        const liquidity = JSBI.BigInt('200000')
+        const currentPoint = 2000
+
+        const costYInRange = [
+                calc.l2Y(liquidityX, LogPowMath.getSqrtPrice(2000), true),
+        ]
+        
+        const acquireXInRange = [
+                calc.l2X(liquidityX, LogPowMath.getSqrtPrice(2000), false),
+        ]
+
+        const sellingYData = [] as DataPair[]
+        const sellingXData = [
+            getDataPair(2000, '1000000000000'),
+            getDataPair(4000, '0')
+        ]
+
+        const highPoint = 2001
+
+        const acquireXAt2000 = sellingXData[0].data
+        const costYAt2000 = calc.getCostYFromXAtPoint(2000, acquireXAt2000)
+
+        const acquireX = [...acquireXInRange, acquireXAt2000]
+
+        const costY = [...costYInRange, costYAt2000]
+
+        const totalAcquireX = calc.getSum(acquireX)
+        const totalCostY = calc.amountListAddFee(costY, JSBI.BigInt(2000))
+
+        const orders: Orders.Orders = {
+            liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
+            liquidity: liquidityData.map((e: DataPair)=>e.data),
+            sellingX: sellingXData.map((e: DataPair)=>e.data),
+            sellingXPoint: sellingXData.map((e: DataPair)=>e.point),
+            sellingY: sellingYData.map((e: DataPair)=>e.data),
+            sellingYPoint: sellingYData.map((e: DataPair)=>e.point)
+        }
+        const state: SwapQuery.State = {
+            currentPoint,
+            sqrtPrice_96: LogPowMath.getSqrtPrice(currentPoint),
+            liquidity,
+            liquidityX
+        }
+        const sqrtRate_96 = LogPowMath.getSqrtPrice(1)
+        const pointDelta = 40
+        const pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
+        const veryBigNumber = JSBI.BigInt('100000000000000000000000000000')
+
+        const {amountX, amountY} = SwapY2XModule.swapY2X(pool, veryBigNumber, highPoint)
 
         expect(amountX.toString()).toBe(totalAcquireX.toString())
         expect(amountY.toString()).toBe(totalCostY.toString())
