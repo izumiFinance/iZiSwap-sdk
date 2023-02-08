@@ -6,7 +6,7 @@ import factoryAbi from './factoryAbi.json'
 import { State } from "./types"
 import { pointDeltaRoundingDown, pointDeltaRoundingUp } from "../base"
 import JSBI from "jsbi"
-import invariant from "tiny-invariant"
+import { PoolErrCode, poolInvariant } from "./error"
 
 export const getPoolContract = (address: string, web3: Web3): Contract => {
     return getEVMContract(poolAbi, address, web3);
@@ -56,8 +56,8 @@ export const getRawDeltaLiquidities = async (pool: Contract, leftPoint: number, 
 
 export const getLiquidities = async (pool: Contract, leftPoint: number, rightPoint: number, targetPoint: number, pointDelta: number, targetLiquidity: string, batchSize: number): Promise<{liquidities: JSBI[], point: number[]}> => {
     
-    invariant(leftPoint <= targetPoint, "leftPoint greater than targetPoint")
-    invariant(rightPoint >= targetPoint, "rightPoint less than or equal to targetPoint")
+    poolInvariant(leftPoint <= targetPoint, PoolErrCode.LEFTPT_GREATER_THAN_CURRENTPT_ERROR)
+    poolInvariant(rightPoint >= targetPoint, PoolErrCode.RIGHTPT_LESS_THAN_CURRENTPT_ERROR)
 
     const leftPointRoundDown = pointDeltaRoundingDown(leftPoint, pointDelta)
     const rightPointRoundUp = pointDeltaRoundingUp(rightPoint, pointDelta) + pointDelta

@@ -1,5 +1,6 @@
 export enum SDKModule {
-    SWAP_QUERY = 'SWAP_QUERY'
+    SWAP_QUERY = 'SWAP_QUERY',
+    POOL = 'POOL'
 }
 
 export class iZiSwapError extends Error {
