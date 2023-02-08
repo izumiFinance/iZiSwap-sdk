@@ -111,7 +111,7 @@ export namespace SwapY2XModule {
     export function swapY2XDesireX(pool: iZiSwapPool, desireX: JSBI, highPt: number): {amountX: JSBI, amountY: JSBI} {
         swapQueryInvariant(JSBI.greaterThan(desireX, Consts.ZERO), SwapQueryErrCode.AMOUNT_ZERO_ERROR)
         highPt = Math.min(highPt, pool.rightMostPt)
-        swapQueryInvariant(Orders.coverHighPoint(pool.orders, highPt), SwapQueryErrCode.LOWPT_OVER_ORDER_RANGE_ERROR)
+        swapQueryInvariant(Orders.coverHighPoint(pool.orders, highPt), SwapQueryErrCode.HIGHPT_OVER_ORDER_RANGE_ERROR)
         let amountX = Consts.ZERO
         let amountY = Consts.ZERO
         const st = pool.state
