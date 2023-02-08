@@ -15,8 +15,8 @@ function getDataPair(point: number, data: number | string | JSBI): DataPair {
     return {point, data: JSBI.BigInt(data)}
 }
 
-describe("test swapY2X", ()=>{
-    test('test swapY2X order not cover currentPt or highPt', () => {
+describe("test swapY2XDesireX", ()=>{
+    test('test swapY2XDesireX order not cover currentPt or highPt', () => {
         const liquidityData = [
             getDataPair(-3600, 100000),
             getDataPair(3600, 0)
@@ -55,7 +55,7 @@ describe("test swapY2X", ()=>{
         let pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), highPoint)
+            SwapY2XModule.swapY2XDesireX(pool, JSBI.BigInt('1000000000000000'), highPoint)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
@@ -69,7 +69,7 @@ describe("test swapY2X", ()=>{
         orders.sellingXPoint.push(Consts.RIGHT_MOST_PT)
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), highPoint)
+            SwapY2XModule.swapY2XDesireX(pool, JSBI.BigInt('1000000000000000'), highPoint)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
@@ -81,7 +81,7 @@ describe("test swapY2X", ()=>{
 
     });
 
-    test('test swapY2X if currentPt >= highPt ', () => {
+    test('test swapY2XDesireX if currentPt >= highPt ', () => {
         const liquidityData = [
             getDataPair(-3600, 100000),
             getDataPair(3600, 0)
@@ -118,7 +118,7 @@ describe("test swapY2X", ()=>{
         let pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), currentPoint)
+            SwapY2XModule.swapY2XDesireX(pool, JSBI.BigInt('1000000000000000'), currentPoint)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
@@ -129,7 +129,7 @@ describe("test swapY2X", ()=>{
         }
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), currentPoint - 1)
+            SwapY2XModule.swapY2XDesireX(pool, JSBI.BigInt('1000000000000000'), currentPoint - 1)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {

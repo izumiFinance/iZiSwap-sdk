@@ -3,7 +3,7 @@ import { iZiSwapPool } from "../src/swapQuery/iZiSwapPool";
 import { LogPowMath } from "../src/swapQuery/library/LogPowMath";
 import { Orders } from "../src/swapQuery/library/Orders";
 import { SwapQuery } from "../src/swapQuery/library/State";
-import { SwapY2XModule } from '../src/swapQuery/swapY2XModule'
+import { SwapX2YModule } from '../src/swapQuery/swapX2YModule'
 import { SwapQueryErrCode, SwapQueryError } from "../src/swapQuery/error";
 import { Consts } from "../src/swapQuery/library/consts";
 interface DataPair {
@@ -15,8 +15,8 @@ function getDataPair(point: number, data: number | string | JSBI): DataPair {
     return {point, data: JSBI.BigInt(data)}
 }
 
-describe("test swapY2X", ()=>{
-    test('test swapY2X order not cover currentPt or highPt', () => {
+describe("test swapX2Y", ()=>{
+    test('test swapX2Y order not cover currentPt or lowPt', () => {
         const liquidityData = [
             getDataPair(-3600, 100000),
             getDataPair(3600, 0)
@@ -24,7 +24,7 @@ describe("test swapY2X", ()=>{
 
         const liquidityX = JSBI.BigInt('20000')
         const liquidity = JSBI.BigInt('100000')
-        const currentPoint = -3601
+        const currentPoint = 3600
 
         const sellingXData = [
             getDataPair(-3680, '1000000000000'),
@@ -33,8 +33,6 @@ describe("test swapY2X", ()=>{
         const sellingYData = [
             getDataPair(-5000, '2000000000000')
         ]
-
-        const highPoint = 3566
 
         const orders: Orders.Orders = {
             liquidityDeltaPoint: liquidityData.map((e: DataPair)=>e.point),
@@ -55,21 +53,27 @@ describe("test swapY2X", ()=>{
         let pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), highPoint)
+            SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), -3600)
+        } catch (err: any) {
+            expect(false).toBe(true)
+        }
+
+        try {
+            SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), -3601)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
-                expect(err.code).toBe(SwapQueryErrCode.HIGHPT_OVER_ORDER_RANGE_ERROR)
+                expect(err.code).toBe(SwapQueryErrCode.LOWPT_OVER_ORDER_RANGE_ERROR)
             } else {
                 expect(false).toBe(true)
             }
         }
 
-        orders.sellingX.push(JSBI.BigInt('0'))
-        orders.sellingXPoint.push(Consts.RIGHT_MOST_PT)
+        orders.liquidity.pop()
+        orders.liquidityDeltaPoint.pop()
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), highPoint)
+            SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), -3599)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
@@ -81,7 +85,7 @@ describe("test swapY2X", ()=>{
 
     });
 
-    test('test swapY2X if currentPt >= highPt ', () => {
+    test('test swapX2Y if currentPt < lowPt ', () => {
         const liquidityData = [
             getDataPair(-3600, 100000),
             getDataPair(3600, 0)
@@ -89,14 +93,13 @@ describe("test swapY2X", ()=>{
 
         const liquidityX = JSBI.BigInt('20000')
         const liquidity = JSBI.BigInt('100000')
-        const currentPoint = -100
+        const currentPoint = 3001
 
         const sellingXData = [
-            getDataPair(-3680, '1000000000000'),
-            getDataPair(0, '2000000000000')
+            getDataPair(3680, '1000000000000'),
         ]
         const sellingYData = [
-            getDataPair(-5000, '2000000000000')
+            getDataPair(-3600, '2000000000000')
         ]
 
         const orders: Orders.Orders = {
@@ -117,23 +120,15 @@ describe("test swapY2X", ()=>{
         const pointDelta = 40
         let pool = new iZiSwapPool(state, orders, sqrtRate_96, pointDelta, 2000)
 
-        try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), currentPoint)
-            expect(false).toBe(true)
-        } catch (err: any) {
-            if (err instanceof SwapQueryError) {
-                expect(err.code).toBe(SwapQueryErrCode.HIGHPT_NOT_GREATER_THAN_CURRENTPT_ERROR)
-            } else {
-                expect(false).toBe(true)
-            }
-        }
+        SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), currentPoint)
+        SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), currentPoint - 1)
 
         try {
-            SwapY2XModule.swapY2X(pool, JSBI.BigInt('1000000000000000'), currentPoint - 1)
+            SwapX2YModule.swapX2Y(pool, JSBI.BigInt('1000000000000000'), currentPoint + 1)
             expect(false).toBe(true)
         } catch (err: any) {
             if (err instanceof SwapQueryError) {
-                expect(err.code).toBe(SwapQueryErrCode.HIGHPT_NOT_GREATER_THAN_CURRENTPT_ERROR)
+                expect(err.code).toBe(SwapQueryErrCode.LOWPT_GREATER_THAN_CURRENTPT_ERROR)
             } else {
                 expect(false).toBe(true)
             }
