@@ -94,7 +94,7 @@ async function main(): Promise<void> {
     console.log('acquire: ', amountY.toString())
 
     // compare with quoter
-    const quoterAddress = '0x4B7aA73F85eA7B1446c11923a26a73d46F5C9A23'
+    const quoterAddress = '0x4bCACcF9A0FC3246449AC8A42A8918F2349Ed543'
     const quoterContract = getQuoterContract(quoterAddress, web3)
     const params = {
         inputToken: iZi,
