@@ -1,5 +1,5 @@
 import JSBI from "jsbi";
-import invariant from "tiny-invariant";
+import { SwapQueryErrCode, swapQueryInvariant } from "./error";
 import { iZiSwapPool } from "./iZiSwapPool";
 import { Consts } from "./library/consts";
 import { LogPowMath } from "./library/LogPowMath";
@@ -11,12 +11,14 @@ import { SwapMathY2XDesire } from "./library/SwapMathY2XDesire";
 export namespace SwapY2XModule {
     
     export function swapY2X(pool: iZiSwapPool, amount: JSBI, highPt: number): {amountX: JSBI, amountY: JSBI} {
-        invariant(JSBI.greaterThan(amount, Consts.ZERO), "AP")
+        swapQueryInvariant(JSBI.greaterThan(amount, Consts.ZERO), SwapQueryErrCode.AMOUNT_ZERO_ERROR)
         highPt = Math.min(highPt, pool.rightMostPt)
-        invariant(Orders.coverHighPoint(pool.orders, highPt), 'order data donot cover low point')
+        swapQueryInvariant(Orders.coverHighPoint(pool.orders, highPt), SwapQueryErrCode.HIGHPT_OVER_ORDER_RANGE_ERROR)
         let amountX = Consts.ZERO
         let amountY = Consts.ZERO
         const st = pool.state
+        swapQueryInvariant(highPt > st.currentPoint, SwapQueryErrCode.HIGHPT_NOT_GREATER_THAN_CURRENTPT_ERROR)
+        swapQueryInvariant(Orders.coverCurrentPoint(pool.orders, st.currentPoint), SwapQueryErrCode.CURRENTPT_OVER_ORDER_RANGE_ERROR)
         let finished = false
         const sqrtRate_96 = pool.sqrtRate_96
         const pointDelta = pool.pointDelta
@@ -69,6 +71,7 @@ export namespace SwapY2XModule {
                     const retState = SwapMathY2X.y2XRange(
                         st, nextPoint, sqrtRate_96, amountNoFee
                     )
+                    
                     finished = retState.finished
     
                     let feeAmount = Consts.ZERO
@@ -106,12 +109,14 @@ export namespace SwapY2XModule {
 
 
     export function swapY2XDesireX(pool: iZiSwapPool, desireX: JSBI, highPt: number): {amountX: JSBI, amountY: JSBI} {
-        invariant(JSBI.greaterThan(desireX, Consts.ZERO), "AP")
+        swapQueryInvariant(JSBI.greaterThan(desireX, Consts.ZERO), SwapQueryErrCode.AMOUNT_ZERO_ERROR)
         highPt = Math.min(highPt, pool.rightMostPt)
-        invariant(Orders.coverHighPoint(pool.orders, highPt), 'order data donot cover low point')
+        swapQueryInvariant(Orders.coverHighPoint(pool.orders, highPt), SwapQueryErrCode.HIGHPT_OVER_ORDER_RANGE_ERROR)
         let amountX = Consts.ZERO
         let amountY = Consts.ZERO
         const st = pool.state
+        swapQueryInvariant(highPt > st.currentPoint, SwapQueryErrCode.HIGHPT_NOT_GREATER_THAN_CURRENTPT_ERROR)
+        swapQueryInvariant(Orders.coverCurrentPoint(pool.orders, st.currentPoint), SwapQueryErrCode.CURRENTPT_OVER_ORDER_RANGE_ERROR)
         let finished = false
         const sqrtRate_96 = pool.sqrtRate_96
         const pointDelta = pool.pointDelta

@@ -157,7 +157,7 @@ export namespace SwapMathX2Y {
             retState.costX = costX
             retState.acquireY = acquireY
             retState.liquidityX = newLiquidityX
-            if (retState.liquidityX < currentState.liquidity ||  retState.costX >= amountX) {
+            if (JSBI.LT(retState.liquidityX, currentState.liquidity) ||  JSBI.GE(retState.costX, amountX)) {
                 // remaining x is not enough to down current price to price / 1.0001
                 // but x may remain, so we cannot simply use (costX == amountX)
                 retState.finished = true;

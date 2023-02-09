@@ -134,7 +134,7 @@ export namespace SwapMathY2X {
             retState.costY = costY
             retState.acquireX = acquireX
             retState.liquidityX = newLiquidityX
-            if (JSBI.greaterThanOrEqual(retState.liquidityX, Consts.ZERO) || JSBI.greaterThanOrEqual(retState.costY, amountY)) {
+            if (JSBI.greaterThan(retState.liquidityX, Consts.ZERO) || JSBI.greaterThanOrEqual(retState.costY, amountY)) {
                 // it means remaining y is not enough to rise current price to price*1.0001
                 // but y may remain, so we cannot simply use (costY == amountY)
                 retState.finished = true;

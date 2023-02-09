@@ -84,7 +84,7 @@ export namespace Orders {
             ++ sellingIdx
         }
         const isLiquidityPoint = (liquidityIdx >= 0) && (orders.liquidityDeltaPoint[liquidityIdx] === currentPoint)
-        const isLimitOrderPoint = (sellingIdx < sellingLength) && (orders.sellingYPoint[sellingIdx] === currentPoint)
+        const isLimitOrderPoint = (sellingIdx < sellingLength) && (orders.sellingXPoint[sellingIdx] === currentPoint)
         return {liquidityIdx, sellingIdx, currentPoint, isLimitOrderPoint, isLiquidityPoint}
     }
 
@@ -98,6 +98,17 @@ export namespace Orders {
         return (highPt <= orders.liquidityDeltaPoint[liquidityNum - 1] && highPt <= orders.sellingXPoint[sellingNum - 1])
     }
 
+    export function coverCurrentPoint(orders: Orders, currentPt: number): boolean {
+        if (currentPt < orders.liquidityDeltaPoint[0]) {
+            return false
+        }
+        const liquidityNum = orders.liquidityDeltaPoint.length
+        if (currentPt > orders.liquidityDeltaPoint[liquidityNum - 1]) {
+            return false
+        }
+        return true
+    }
+
     export function nearestLeftOneOrBoundary(
         orders: Orders,
         currentCursor: Cursor,
@@ -108,9 +119,6 @@ export namespace Orders {
         const sellingPoint = currentCursor.sellingIdx >= 0 ? orders.sellingYPoint[currentCursor.sellingIdx] : Consts.LEFT_MOST_PT
         const nextPoint = Math.max(liquidityPoint, sellingPoint)
         let mapPt = Math.floor(point / pointDelta)
-        if (point < 0 && point % pointDelta != 0) {
-            mapPt -= 1
-        }
     
         const bitIdx = (mapPt % 256 + 256) % 256
         const leftPtInBlock = (mapPt - bitIdx) * pointDelta
@@ -130,12 +138,8 @@ export namespace Orders {
         const sellingPoint = destSellingIdx < orders.sellingX.length ? orders.sellingXPoint[destSellingIdx] : Consts.RIGHT_MOST_PT
         const nextPoint = Math.min(liquidityPoint, sellingPoint)
         let mapPt = Math.floor(point / pointDelta)
-        if (point < 0 && point % pointDelta != 0) {
-            mapPt -= 1
-        }
         // strict right of current point
         mapPt += 1
-
         const bitIdx = (mapPt % 256 + 256) % 256
         const rightPtInBlock = (mapPt + 255 - bitIdx) * pointDelta
         return Math.min(nextPoint, rightPtInBlock)

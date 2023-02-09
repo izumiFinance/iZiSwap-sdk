@@ -1,26 +1,17 @@
 
-import {BaseChain, ChainId, initialChainTable, PriceRoundingType} from '../../src/base/types'
-import {privateKey} from '../../.secret'
+import {BaseChain, ChainId, initialChainTable} from '../../src/base/types'
 import Web3 from 'web3';
-import http, { AgentOptions } from 'http'
-import https from 'https'
 import { getLiquidities, getLimitOrders, getPointDelta, getPoolContract, getPoolState } from '../../src/pool/funcs';
 import { getPoolAddress, getLiquidityManagerContract } from '../../src/liquidityManager/view';
 import { Orders } from '../../src/swapQuery/library/Orders'
 import { LogPowMath } from '../../src/swapQuery/library/LogPowMath'
 import { iZiSwapPool } from '../../src/swapQuery/iZiSwapPool'
-import { amount2Decimal, decimal2Amount, fetchToken, getErc20TokenContract } from '../../src/base/token/token';
-import { pointDeltaRoundingDown, pointDeltaRoundingUp, priceDecimal2Point } from '../../src/base/price';
-import { BigNumber } from 'bignumber.js'
-import { calciZiLiquidityAmountDesired } from '../../src/liquidityManager/calc';
-import { getMintCall } from '../../src/liquidityManager/liquidity';
-import { getQuoterContract, quoterSwapChainWithExactInput, quoterSwapChainWithExactOutput } from '../../src/quoter/funcs';
-import { QuoterSwapChainWithExactInputParams, QuoterSwapChainWithExactOutputParams } from '../../src/quoter/types';
-import { getSwapChainWithExactOutputCall, getSwapContract } from '../../src/swap/funcs';
-import { SwapChainWithExactOutputParams } from '../../src/swap/types';
+import { decimal2Amount, fetchToken } from '../../src/base/token/token';
 import { SwapQuery } from '../../src/swapQuery/library/State';
 import { SwapX2YModule } from '../../src/swapQuery/swapX2YModule'
 import JSBI from 'jsbi';
+import { getQuoterContract, quoterSwapSingleWithExactInput } from '../../src/quoter/funcs';
+import { QuoterSwapSingleWithExactInputParams } from '../../src/quoter/types';
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
@@ -101,6 +92,22 @@ async function main(): Promise<void> {
     
     console.log('cost: ', amountX.toString())
     console.log('acquire: ', amountY.toString())
+
+    // compare with quoter
+    const quoterAddress = '0x4B7aA73F85eA7B1446c11923a26a73d46F5C9A23'
+    const quoterContract = getQuoterContract(quoterAddress, web3)
+    const params = {
+        inputToken: iZi,
+        outputToken: BNB,
+        fee: fee,
+        inputAmount: inputAmountStr,
+        boundaryPt: lowPt
+    } as QuoterSwapSingleWithExactInputParams
+
+    const {outputAmount, finalPoint} = await quoterSwapSingleWithExactInput(quoterContract, params)
+
+    console.log('outputAmount: ', outputAmount)
+    console.log('finalPoint: ', finalPoint)
 
 }
 

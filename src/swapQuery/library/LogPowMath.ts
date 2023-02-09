@@ -1,5 +1,5 @@
 import JSBI from 'jsbi'
-import invariant from 'tiny-invariant'
+import { SwapQueryErrCode, swapQueryInvariant } from '../error'
 import { Consts } from './consts'
 
 import { mostSignificantBit } from './mostSignificantBit'
@@ -39,7 +39,7 @@ export abstract class LogPowMath {
    * @param point the point for which to compute the sqrt ratio
    */
   public static getSqrtPrice(point: number): JSBI {
-    invariant(point >= LogPowMath.MIN_POINT && point <= LogPowMath.MAX_POINT && Number.isInteger(point), 'POINT')
+    swapQueryInvariant(point >= LogPowMath.MIN_POINT && point <= LogPowMath.MAX_POINT && Number.isInteger(point), SwapQueryErrCode.POINT_OVER_RANGE_ERROR, '[-800000, 800000]')
     const absTick: number = point < 0 ? point * -1 : point
 
     let ratio: JSBI =
@@ -80,10 +80,10 @@ export abstract class LogPowMath {
    * @param sqrtRatioX96 the sqrt ratio as a Q64.96 for which to compute the point
    */
   public static getLogSqrtPriceFloor(sqrtRatioX96: JSBI): number {
-    invariant(
+    swapQueryInvariant(
       JSBI.greaterThanOrEqual(sqrtRatioX96, LogPowMath.MIN_SQRT_RATIO) &&
         JSBI.lessThan(sqrtRatioX96, LogPowMath.MAX_SQRT_RATIO),
-      'SQRT_RATIO'
+      SwapQueryErrCode.SQRTPRICE_OVER_RANGE_ERROR
     )
 
     const sqrtRatioX128 = JSBI.leftShift(sqrtRatioX96, JSBI.BigInt(32))
@@ -129,10 +129,10 @@ export abstract class LogPowMath {
   }
 
   public static getLogSqrtPriceFU(sqrtRatioX96: JSBI): {logFloor: number, logUpper: number} {
-    invariant(
+    swapQueryInvariant(
       JSBI.greaterThanOrEqual(sqrtRatioX96, LogPowMath.MIN_SQRT_RATIO) &&
         JSBI.lessThan(sqrtRatioX96, LogPowMath.MAX_SQRT_RATIO),
-      'SQRT_RATIO'
+      SwapQueryErrCode.SQRTPRICE_OVER_RANGE_ERROR
     )
 
     const sqrtRatioX128 = JSBI.leftShift(sqrtRatioX96, JSBI.BigInt(32))
