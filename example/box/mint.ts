@@ -47,7 +47,6 @@ async function main(): Promise<void> {
     const liquidityManagerAddress = '0x6bEae78975e561fDF27AaC6f09F714E69191DcfD'
     const liquidityManagerContract = getLiquidityManagerContract(liquidityManagerAddress, web3)
 
-    console.log('aa')
     const poolAddress = await getPoolAddress(liquidityManagerContract, feeB, wBNB, fee)
     console.log('pool: ', poolAddress)
     const pool = getPoolContract(poolAddress, web3)
