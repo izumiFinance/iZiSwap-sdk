@@ -7,6 +7,8 @@ Check [iZUMi.finance](https://developer.izumi.finance/iZiSwap/SDK/) for in-depth
 
 ## run example
 
+Notice that, this section we only talk about how to run the attached examples after cloning this `sdk-source-project` from github. For usage of this sdk, you should install this package from npm in your project (see next section for installation command).
+
 Suppose you want to run example of mint, you could first compile that example.
 ```
 $ npx tsc example/liquidityManager/mint.ts --resolveJsonModule --esModuleInterop --outDir bin
