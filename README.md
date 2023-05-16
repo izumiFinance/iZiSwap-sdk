@@ -5,6 +5,8 @@ The latest version of the SDK is considered Alpha software and may contain bugs 
 
 Check [iZUMi.finance](https://developer.izumi.finance/iZiSwap/SDK/) for in-depth documentation.
 
+Check [Github](https://github.com/izumiFinance/iZiSwap-sdk) for latest sdk code.
+
 ## run example
 
 Notice that, this section we only talk about how to run the attached examples after cloning this `sdk-source-project` from github. For usage of this sdk, you should install this package from npm in your project (see next section for installation command).
@@ -25,7 +27,7 @@ to install sdk in your project, use following command.
 $ npm install iziswap-sdk
 ```
 
-## new in version 1.2.0
+## new from version 1.2.0
 
 the difference is that we add a new way to specify whether to use `wrapped gas token` (like `WBNB` on `BSC`, or `WETH` on `ethereum` or `arbitrum`...), or to use `gas token` (like `BNB` on `BSC` or `ETH` on `ethereum` or `arbitrum`)
 
