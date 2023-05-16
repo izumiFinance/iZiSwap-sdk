@@ -8,14 +8,14 @@ export interface Dictionary<T> {
 
 export interface TokenInfoFormatted {
     chainId: number;
-    name: string;
+    name?: string;
     symbol: string;
-    icon: string;
+    icon?: string;
     address: string;
     wrapTokenAddress?: string;
     decimal: number;
     addTime?: Date;
-    custom: boolean;
+    custom?: boolean;
 }
 
 export enum ChainId {
@@ -59,8 +59,8 @@ export interface BaseChain {
     name: string;
     tokenSymbol: string;
     token: Partial<TokenInfoFormatted>;
-    wrappedTokenSymbol?: string;
-    wrappedToken?: Partial<TokenInfoFormatted>;
+    wrappedTokenSymbol: string;
+    wrappedToken: Partial<TokenInfoFormatted>;
     icon: string;
     scanUrl: string;
     scanName: string;
@@ -97,11 +97,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            decimal: 18,
         },
         icon: '/assets/tokens/eth.png',
         scanUrl: 'https://etherscan.io/',
@@ -118,11 +120,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'BNB',
             address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WBNB',
         wrappedToken: {
             symbol: 'WBNB',
             address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+            decimal: 18,
         },
         icon: '/assets/tokens/bnbChain.png',
         scanUrl: 'https://bscscan.com/',
@@ -139,11 +143,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB',
+            decimal: 18,
         },
         icon: '/assets/tokens/aurora.png',
         scanUrl: 'https://aurorascan.dev/',
@@ -160,11 +166,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+            decimal: 18,
         },
         icon: '/assets/tokens/arbitrum.svg',
         scanUrl: 'https://arbiscan.io/',
@@ -181,11 +189,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'MATIC',
             address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WMATIC',
         wrappedToken: {
             symbol: 'WMATIC',
             address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+            decimal: 18,
         },
         icon: '/assets/tokens/matic.png',
         scanUrl: 'https://polygonscan.com/',
@@ -202,11 +212,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'CRO',
             address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WCRO',
         wrappedToken: {
             symbol: 'WCRO',
             address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
+            decimal: 18,
         },
         icon: '/assets/tokens/cronos.png',
         scanUrl: 'https://cronoscan.com/',
@@ -222,6 +234,14 @@ const initialChains: BaseChain[] = [
         tokenSymbol: 'ETH',
         token: {
             symbol: 'ETH',
+            address: '0x4200000000000000000000000000000000000006',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x4200000000000000000000000000000000000006',
+            decimal: 18,
         },
         icon: '/assets/tokens/OP.svg',
         scanUrl: 'https://optimistic.etherscan.io/',
@@ -237,11 +257,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETC',
             address: '0x1953cab0E5bFa6D4a9BaD6E05fD46C1CC6527a5a',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETC',
         wrappedToken: {
             symbol: 'WETC',
             address: '0x1953cab0E5bFa6D4a9BaD6E05fD46C1CC6527a5a',
+            decimal: 18,
         },
         icon: '/assets/tokens/etc.png',
         scanUrl: 'https://blockscout.com/etc/mainnet/',
@@ -252,30 +274,19 @@ const initialChains: BaseChain[] = [
         blockDeltaU: 14,
     },
     {
-        id: ChainId.Gatechain,
-        name: 'Gatechain',
-        tokenSymbol: 'GT',
-        token: {
-            symbol: 'GT',
-        },
-        icon: '/assets/tokens/GT.png',
-        scanUrl: 'https://gatescan.org/',
-        scanName: 'GateScan',
-        vmType: 'EVM',
-        rpcUrl: 'https://evm.gatenode.cc',
-    },
-    {
         id: ChainId.BSCTestnet,
         name: 'BSC Testnet',
         tokenSymbol: 'BNB',
         token: {
             symbol: 'BNB',
             address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WBNB',
         wrappedToken: {
             symbol: 'WBNB',
             address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
+            decimal: 18,
         },
         icon: '/assets/tokens/bsc.png',
         scanUrl: 'https://testnet.bscscan.com/',
@@ -292,11 +303,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+            decimal: 18,
         },
         icon: '/assets/tokens/aurora.png',
         scanUrl: 'https://testnet.aurorascan.dev/',
@@ -307,44 +320,19 @@ const initialChains: BaseChain[] = [
         blockDeltaU: 1.5,
     },
     {
-        id: ChainId.Heco,
-        name: 'Heco',
-        tokenSymbol: 'HT',
-        token: {
-            symbol: 'HT',
-        },
-        icon: '/assets/tokens/HECO.svg',
-        scanUrl: 'https://hecoinfo.com/',
-        scanName: 'HecoInfo',
-        vmType: 'EVM',
-        rpcUrl: 'https://http-mainnet-node.huobichain.com',
-    },
-
-    {
-        id: ChainId.Fantom,
-        name: 'Fantom',
-        tokenSymbol: 'FTM',
-        token: {
-            symbol: 'FTM',
-        },
-        icon: '/assets/tokens/fantom.png',
-        scanUrl: 'https://ftmscan.com/',
-        scanName: 'FtmScan',
-        vmType: 'EVM',
-        rpcUrl: 'https://rpcapi.fantom.network',
-    },
-    {
         id: ChainId.Rinkeby,
         name: 'Rinkeby',
         tokenSymbol: 'ETH',
         token: {
             symbol: 'ETH',
             address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+            decimal: 18,
         },
         icon: '/assets/tokens/eth.png',
         scanUrl: 'https://rinkeby.etherscan.io/',
@@ -361,11 +349,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0x8C3e3f2983DB650727F3e05B7a7773e4D641537B',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0x8C3e3f2983DB650727F3e05B7a7773e4D641537B',
+            decimal: 18,
         },
         icon: '/assets/tokens/zksync.png',
         scanUrl: 'https://zksync2-testnet.zkscan.io/',
@@ -382,11 +372,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
+            decimal: 18,
         },
         icon: '/assets/tokens/zksync.png',
         scanUrl: 'https://explorer.zksync.io/',
@@ -403,11 +395,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ONG',
             address: '0xe8cf015f797877a9a23e80447429c0b0f04e114b',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WONG',
         wrappedToken: {
             symbol: 'WONG',
             address: '0xe8cf015f797877a9a23e80447429c0b0f04e114b',
+            decimal: 18,
         },
         icon: '/assets/tokens/ont.png',
         scanUrl: 'https://explorer.ont.io/testnet',
@@ -424,11 +418,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ONG',
             address: '0xd8bc24cfd45452ef2c8bc7618e32330b61f2691b',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WONG',
         wrappedToken: {
             symbol: 'WONG',
             address: '0xd8bc24cfd45452ef2c8bc7618e32330b61f2691b',
+            decimal: 18,
         },
         icon: '/assets/tokens/ont.png',
         scanUrl: 'https://explorer.ont.io/',
@@ -445,11 +441,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'BIT',
             address: '0x69AC69b272f96F5f17DDD9da3832ad9Dc86D1d8A',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WBIT',
         wrappedToken: {
             symbol: 'WBIT',
             address: '0x69AC69b272f96F5f17DDD9da3832ad9Dc86D1d8A',
+            decimal: 18,
         },
         icon: '/assets/tokens/mantle.png',
         scanUrl: 'https://explorer.testnet.mantle.xyz',
@@ -466,11 +464,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
+            decimal: 18,
         },
         icon: '/assets/tokens/scroll.png',
         scanUrl: 'https://blockscout.scroll.io/',
@@ -487,11 +487,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ICT',
             address: '0xc59d478873d11CCc68F9c63571E821a253c5B605',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WICT',
         wrappedToken: {
             symbol: 'WICT',
             address: '0xc59d478873d11CCc68F9c63571E821a253c5B605',
+            decimal: 18,
         },
         icon: '/assets/tokens/icplaza.png',
         scanUrl: 'https://browsemainnet.ic-plaza.org/index/',
@@ -508,11 +510,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'CFX',
             address: '0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WCFX',
         wrappedToken: {
             symbol: 'WCFX',
             address: '0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b',
+            decimal: 18,
         },
         icon: '/assets/tokens/cfx.png',
         scanUrl: 'https://evm.confluxscan.net',
@@ -529,11 +533,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'MTR',
             address: '0x160361ce13ec33C993b5cCA8f62B6864943eb083',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WMTR',
         wrappedToken: {
             symbol: 'WMTR',
             address: '0x160361ce13ec33C993b5cCA8f62B6864943eb083',
+            decimal: 18,
         },
         icon: '/assets/tokens/mtr.png',
         scanUrl: 'https://scan.meter.io',
@@ -550,11 +556,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'TLOS',
             address: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
+            decimal: 18,
         },
         wrappedTokenSymbol: 'WTLOS',
         wrappedToken: {
             symbol: 'WTLOS',
             address: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
+            decimal: 18,
         },
         icon: '/assets/tokens/tlos.png',
         scanUrl: 'https://www.teloscan.io/',
@@ -571,6 +579,13 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
+            decimal: 18,
         },
         icon: '/assets/tokens/eth.png',
         scanUrl: 'https://goerli.etherscan.io/',
@@ -586,25 +601,20 @@ const initialChains: BaseChain[] = [
         tokenSymbol: 'Matic',
         token: {
             symbol: 'Matic',
+            address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WMatic',
+        wrappedToken: {
+            symbol: 'WMatic',
+            address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
+            decimal: 18,
         },
         icon: '/assets/tokens/matic.png',
         scanUrl: 'https://mumbai.polygonscan.com/',
         scanName: 'PolygonMumbaiScan',
         vmType: 'EVM',
         rpcUrl: 'https://rpc-mumbai.maticvigil.com',
-    },
-    {
-        id: ChainId.Harmony,
-        name: 'Harmony',
-        tokenSymbol: 'ONE',
-        token: {
-            symbol: 'ONE',
-        },
-        icon: '/assets/tokens/harmony.png',
-        scanUrl: 'https://explorer.harmony.one/#/',
-        scanName: 'HarmonyScan',
-        vmType: 'EVM',
-        rpcUrl: 'https://api.harmony.one',
     },
 ];
 
@@ -618,6 +628,10 @@ const lookupTableReducer = (
 };
 
 export const initialChainTable = initialChains.reduce(lookupTableReducer, {})
+
+export const getChain = (chainId: ChainId):BaseChain => {
+    return initialChainTable[chainId]
+}
 
 export enum PointRoundingType {
     POINT_ROUNDING_NEAREST = 0,

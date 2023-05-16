@@ -2,7 +2,7 @@ import { Contract } from 'web3-eth-contract'
 import { PromiEvent } from 'web3-core';
 import { BaseChain, buildSendingParams, ChainId } from '../base/types'
 import { AddLiquidityParam, CollectLiquidityParam, DecLiquidityParam, MintParam } from './types'
-import { getSwapTokenAddress } from '../base/token';
+import { getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken } from '../base/token';
 
 export const getMintCall = (
     liquidityManagerContract: Contract,
@@ -13,17 +13,24 @@ export const getMintCall = (
 ): {mintCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
     const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
         maxFeePerGas: gasPrice,
     }
-    if (!strictERC20Token) {
-        if (chain.tokenSymbol === params.tokenA.symbol) {
+    if (strictERC20Token == undefined) {
+        if (isGasToken(params.tokenA, chain.id)) {
             options.value = params.maxAmountA
         }
-        if (chain.tokenSymbol === params.tokenB.symbol) {
+        if (isGasToken(params.tokenB, chain.id)) {
+            options.value = params.maxAmountB
+        }
+    } else if (!strictERC20Token) {
+        if (isGasOrWrappedGasToken(params.tokenA, chain.id)) {
+            options.value = params.maxAmountA
+        }
+        if (isGasOrWrappedGasToken(params.tokenB, chain.id)) {
             options.value = params.maxAmountB
         }
     }
@@ -86,12 +93,19 @@ export const getAddLiquidityCall = (
         value: '0',
         maxFeePerGas: gasPrice,
     }
-    const strictERC20Token = params.strictERC20Token ?? false
-    if (!strictERC20Token) {
-        if (chain.tokenSymbol === params.tokenA.symbol) {
+    const strictERC20Token = params.strictERC20Token
+    if (strictERC20Token == undefined) {
+        if (isGasToken(params.tokenA, chain.id)) {
             options.value = params.maxAmountA
         }
-        if (chain.tokenSymbol === params.tokenB.symbol) {
+        if (isGasToken(params.tokenB, chain.id)) {
+            options.value = params.maxAmountB
+        }
+    } else if (!strictERC20Token) {
+        if (isGasOrWrappedGasToken(params.tokenA, chain.id)) {
+            options.value = params.maxAmountA
+        }
+        if (isGasOrWrappedGasToken(params.tokenB, chain.id)) {
             options.value = params.maxAmountB
         }
     }
@@ -163,15 +177,20 @@ export const getCollectLiquidityCall = (
     gasPrice: number | string
 ) : {collectLiquidityCalling: any, options: any} => {
     const ifReverse = getSwapTokenAddress(params.tokenA).toLowerCase() > getSwapTokenAddress(params.tokenB).toLowerCase()
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
 
     const options = {
         from: account,
         maxFeePerGas: gasPrice,
     }
 
-    const outputIsChainCoin = (!strictERC20Token && (chain.tokenSymbol === params.tokenA.symbol || chain.tokenSymbol === params.tokenB.symbol));
-    
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        outputIsChainCoin = isGasToken(params.tokenA, chain.id) || isGasToken(params.tokenB, chain.id)
+    } else {
+        outputIsChainCoin = (!strictERC20Token && (isGasOrWrappedGasToken(params.tokenA, chain.id) || isGasOrWrappedGasToken(params.tokenB, chain.id)))
+    }
+
     const finalRecipientAddress = params.recipient ?? account
     const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress
     const callings = []

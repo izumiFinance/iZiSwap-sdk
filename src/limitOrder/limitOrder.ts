@@ -1,5 +1,5 @@
 import { Contract } from 'web3-eth-contract'
-import { getSwapTokenAddress } from '../base/token'
+import { getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken } from '../base/token'
 import { BaseChain, buildSendingParams } from '../base/types'
 import { AddLimOrderParam, CollectLimOrderParam } from './types'
 
@@ -21,14 +21,18 @@ export const getNewLimOrderCall = (
         tokenYAddress = tokenXAddress
         tokenXAddress = tmp
     }
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
         maxFeePerGas: gasPrice,
     }
-    if (!strictERC20Token) {
-        if (chain.tokenSymbol === params.sellToken.symbol) {
+    if (strictERC20Token == undefined) {
+        if (isGasToken(params.sellToken, chain.id)) {
+            options.value = params.sellAmount
+        }
+    } else if (!strictERC20Token) {
+        if (isGasOrWrappedGasToken(params.sellToken, chain.id)) {
             options.value = params.sellAmount
         }
     }
@@ -101,15 +105,20 @@ export const getCollectLimitOrderCall = (
     params: CollectLimOrderParam, 
     gasPrice: number | string
 ) : {collectLimitOrderCalling: any, options: any} => {
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
 
     const options = {
         from: account,
         maxFeePerGas: gasPrice,
     }
 
-    const outputIsChainCoin = (!strictERC20Token && (chain.tokenSymbol === params.tokenX.symbol || chain.tokenSymbol === params.tokenY.symbol));
-    
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        outputIsChainCoin = isGasToken(params.tokenX, chain.id) || isGasToken(params.tokenY, chain.id)
+    } else {
+        outputIsChainCoin = (!strictERC20Token && (isGasOrWrappedGasToken(params.tokenX, chain.id) || isGasOrWrappedGasToken(params.tokenY, chain.id)))
+    }
+
     const finalRecipientAddress = params.recipient ?? account
     const innerRecipientAddress = outputIsChainCoin ? '0x0000000000000000000000000000000000000000' : finalRecipientAddress;
     const callings = []

@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 
-import {BaseChain, getSwapTokenAddress, TokenInfoFormatted} from '../base'
+import {BaseChain, getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken, TokenInfoFormatted} from '../base'
 
 import { getEVMContract, getTokenChainPath, getTokenChainPathReverse, buildSendingParams } from '../base';
 
@@ -24,15 +24,23 @@ export const getSwapSingleWithExactInputCall = (
     const deadline = params.deadline ?? '0xffffffff'
     const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
         maxFeePerGas: gasPrice,
     }
 
-    const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === params.inputToken.symbol);
-    const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === params.outputToken.symbol);
+    let inputIsChainCoin = false
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        inputIsChainCoin = isGasToken(params.inputToken, chain.id)
+        outputIsChainCoin = isGasToken(params.outputToken, chain.id)
+    } else {
+        inputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(params.inputToken, chain.id))
+        outputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(params.outputToken, chain.id))
+    }
+
     if (inputIsChainCoin) {
         options.value = params.inputAmount;
     }
@@ -94,15 +102,23 @@ export const getSwapSingleWithExactOutputCall = (
     const deadline = params.deadline ?? '0xffffffff'
     const isX2Y = getSwapTokenAddress(params.inputToken).toLowerCase() < getSwapTokenAddress(params.outputToken).toLowerCase()
     const boundaryPt = params.boundaryPt ?? (isX2Y ? -799999 : 799999)
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
         maxFeePerGas: gasPrice,
     }
 
-    const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === params.inputToken.symbol);
-    const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === params.outputToken.symbol);
+    let inputIsChainCoin = false
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        inputIsChainCoin = isGasToken(params.inputToken, chain.id)
+        outputIsChainCoin = isGasToken(params.outputToken, chain.id)
+    } else {
+        inputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(params.inputToken, chain.id))
+        outputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(params.outputToken, chain.id))
+    }
+
     if (inputIsChainCoin) {
         options.value = params.maxInputAmount;
     }
@@ -172,8 +188,15 @@ export const getSwapChainWithExactInputCall = (
     const outputToken = params.tokenChain[params.tokenChain.length - 1]
     const path = getTokenChainPath(params.tokenChain, params.feeChain)
 
-    const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === inputToken.symbol);
-    const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === outputToken.symbol);
+    let inputIsChainCoin = false
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        inputIsChainCoin = isGasToken(inputToken, chain.id)
+        outputIsChainCoin = isGasToken(outputToken, chain.id)
+    } else {
+        inputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(inputToken, chain.id))
+        outputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(outputToken, chain.id))
+    }
     if (inputIsChainCoin) {
         options.value = params.inputAmount;
     }
@@ -225,8 +248,15 @@ export const getSwapChainWithExactOutputCall = (
     const outputToken = params.tokenChain[params.tokenChain.length - 1]
     const path = getTokenChainPathReverse(params.tokenChain, params.feeChain)
 
-    const inputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === inputToken.symbol);
-    const outputIsChainCoin = (!strictERC20Token && chain.tokenSymbol === outputToken.symbol);
+    let inputIsChainCoin = false
+    let outputIsChainCoin = false
+    if (strictERC20Token == undefined) {
+        inputIsChainCoin = isGasToken(inputToken, chain.id)
+        outputIsChainCoin = isGasToken(outputToken, chain.id)
+    } else {
+        inputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(inputToken, chain.id))
+        outputIsChainCoin = (!strictERC20Token && isGasOrWrappedGasToken(outputToken, chain.id))
+    }
     if (inputIsChainCoin) {
         options.value = params.maxInputAmount;
     }
