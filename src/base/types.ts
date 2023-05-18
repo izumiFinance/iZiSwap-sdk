@@ -35,6 +35,7 @@ export enum ChainId {
     Meter = 82,
     Telos = 40,
     Ontology = 58,
+    Ultron = 1231,
 
     // testnet
     Rinkeby = 4,
@@ -610,6 +611,27 @@ const initialChains: BaseChain[] = [
         scanName: 'PolygonMumbaiScan',
         vmType: 'EVM',
         rpcUrl: 'https://rpc-mumbai.maticvigil.com',
+    },
+    {
+        id: ChainId.Ultron,
+        name: 'Ultron',
+        tokenSymbol: 'ULX',
+        token: {
+            symbol: 'ULX',
+            address: '0xb1183357745D3fD7d291E42a2c4B478cdB5710c6',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'wULX',
+        wrappedToken: {
+            symbol: 'wULX',
+            address: '0xb1183357745D3fD7d291E42a2c4B478cdB5710c6',
+            decimal: 18,
+        },
+        icon: '/assets/tokens/ulx.png',
+        scanUrl: 'https://ulxscan.com',
+        scanName: 'UltronScan',
+        vmType: 'EVM',
+        rpcUrl: 'https://ultron-rpc.net',
     },
 ];
 
