@@ -5,6 +5,19 @@ import { amount2Decimal, getSwapTokenAddress, point2PriceDecimal, TokenInfoForma
 import { CallingProperty, Path, PathQuery, PathQueryCalling, PathQueryResult, PreQueryResult, SwapDirection } from "./types"
 import { getQuoterContract } from "../quoter"
 
+const SwapAmount = [
+    {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+    },
+    {
+        "internalType": "int24[]",
+        "name": "pointAfterList",
+        "type": "int24[]"
+    }
+]
+
 export class SwapPathQueryPlugin {
 
     private preQueryResult: PreQueryResult
@@ -185,24 +198,18 @@ export class SwapPathQueryPlugin {
         let pointAfterList = [] as number[]
         if (direction === SwapDirection.ExactIn) {
 
-            const swapAmountRes = this.web3.eth.abi.decodeParameter(
-                {
-                    "acquire": "uint256",
-                    "pointAfterList": "int24[]"
-                },
+            const swapAmountRes = this.web3.eth.abi.decodeParameters(
+                SwapAmount,
                 result
             ) as any
-            responseAmount = swapAmountRes["acquire"]
+            responseAmount = swapAmountRes["amount"]
             pointAfterList = swapAmountRes["pointAfterList"].map((e: any)=>Number(e))
         } else {
-            const swapDesireRes = this.web3.eth.abi.decodeParameter(
-                {
-                    "cost": "uint256",
-                    "pointAfterList": "int24[]"
-                },
+            const swapDesireRes = this.web3.eth.abi.decodeParameters(
+                SwapAmount,
                 result
             ) as any
-            responseAmount = swapDesireRes["cost"]
+            responseAmount = swapDesireRes["amount"]
             pointAfterList = swapDesireRes["pointAfterList"].slice().reverse().map((e: any) => Number(e))
         }
         const noSufficientLiquidity = this.noSufficientLiquidity(path, pointAfterList)
