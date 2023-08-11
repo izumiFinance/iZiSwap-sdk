@@ -56,7 +56,7 @@ export const doPreQuery = async (
 
     while (!checkFinish(dagNodes, visited)) {
         let num = 0
-        while (num < dagNodes.length) {
+        while (num + visited < dagNodes.length) {
             if (!checkNodeCanVisit(dagNodes[num + visited], visited)) {
                 break
             } else {
