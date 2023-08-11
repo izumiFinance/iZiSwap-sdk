@@ -87,10 +87,12 @@ export const doPreQuery = async (
 
 
         for (let i = 0; i < successes.length; i ++) {
-            if (!successes[i]) {
+            if (!successes[i] || results[i] === '0x') {
                 continue
             }
-            currentNodes[i].parseCallingResponse(results[i])
+            try {
+                currentNodes[i].parseCallingResponse(results[i])
+            } catch (_) {}
         }
         visited += currentNum
 
@@ -136,13 +138,18 @@ async function _doPathQuery(
         const contracts = batchCallings.map((e)=>e.targetAddress)
         const {successes, results} = await multiQuery(multicall, data, contracts)
         for (let j = 0; j < len; j ++) {
-            if (!successes[j]) {
+            if (!successes[j] || results[j] === '0x') {
                 continue
             }
             const idx = i + j
             const path = callingPath[idx]
-            const pathQueryResult = pathQueryPlugins.parseCallingResponse(path, direction, amount, results[j])
-
+            let pathQueryResult = undefined
+            try {
+                pathQueryResult = pathQueryPlugins.parseCallingResponse(path, direction, amount, results[j])
+            } catch (_) {}
+            if (!pathQueryResult) {
+                continue
+            }
             if (!pathQueryResult.noSufficientLiquidity) {
                 if (checkNewPathQueryBetter(finalPathQueryResult, pathQueryResult, direction)) {
                     finalPathQueryResult = {...pathQueryResult}
