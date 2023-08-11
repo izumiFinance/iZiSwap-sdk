@@ -12,7 +12,7 @@ async function main(): Promise<void> {
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
     
-    const quoterAddress = '0x12a76434182c8cAF7856CE1410cD8abfC5e2639F'
+    const quoterAddress = '0x4bCACcF9A0FC3246449AC8A42A8918F2349Ed543'
 
     const BNB = {
         chainId: ChainId.BSCTestnet,
