@@ -30,7 +30,7 @@ async function main(): Promise<void> {
 
     const USDC = {
         chainId: ChainId.BSCTestnet,
-        symbol: "USDT",
+        symbol: "USDC",
         address: "0x876508837C162aCedcc5dd7721015E83cbb4e339",
         decimal: 6
     }
