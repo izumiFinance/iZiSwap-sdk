@@ -100,7 +100,7 @@ async function main(): Promise<void> {
     //     just use following code:
     //     await searchPathQuery(searchParams, preQueryResult)
     //     cached data in preQueryResult can be used for different
-    //     pair of <inputToken, outputToken>
+    //     pair of <inputToken, outputToken> or different direction
     //     but notice that, cached data in preQueryResult can not be
     //     used in different chain
     const {pathQueryResult, preQueryResult} = await searchPathQuery(
