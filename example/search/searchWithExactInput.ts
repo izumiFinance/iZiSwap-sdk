@@ -8,7 +8,7 @@ import { searchPathQuery } from '../../src/search/func'
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
-    const rpc = 'https://bsc-dataseed2.defibit.io/'
+    const rpc = 'https://data-seed-prebsc-1-s3.binance.org:8545/'
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
     
