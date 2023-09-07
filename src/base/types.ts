@@ -40,6 +40,8 @@ export enum ChainId {
     Base = 8453,
     Linea = 59144,
     Loot = 5151706,
+    OpBNB = 204,
+    Kroma = 255,
 
     // testnet
     Rinkeby = 4,
@@ -50,9 +52,11 @@ export enum ChainId {
     AuroraTestnet = 1313161555,
     ZkSyncAlphaTest = 280,
     MantleTest = 5001,
-    ScrollTestL2 = 534353,
+    ScrollTestL2 = 534351,
     LineaTest = 59140,
     MantaTest = 3441005,
+    StagingFastActiveBellatrix = 1351057110,
+    KromaSepoliaTest = 2358,
 }
 
 
@@ -479,10 +483,10 @@ const initialChains: BaseChain[] = [
             address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
             decimal: 18,
         },
-        scanUrl: 'https://blockscout.scroll.io/',
-        scanName: 'scroll test scan',
+        scanUrl: 'https://sepolia-blockscout.scroll.io/',
+        scanName: 'scroll sepolia test scan',
         vmType: 'EVM',
-        rpcUrl: 'https://alpha-rpc.scroll.io/l2',
+        rpcUrl: 'https://sepolia-rpc.scroll.io/',
         blockDelta: 12,
         blockDeltaU: 12,
     },
@@ -715,6 +719,87 @@ const initialChains: BaseChain[] = [
         scanName: 'Loot Mainnet Explorer',
         vmType: 'EVM',
         rpcUrl: 'https://rpc.lootchain.com/http',
+    },
+
+    {
+        id: ChainId.StagingFastActiveBellatrix,
+        name: 'Skale Testnet',
+        tokenSymbol: 'sFUEL',
+        token: {
+            symbol: 'sFUEL',
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'wsFUEL',
+        wrappedToken: {
+            symbol: 'wsFUEL',
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+            decimal: 18,
+        },
+        scanUrl: 'https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com/',
+        scanName: 'staging-fast-active-bellatrix scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix/',
+    },
+    {
+        id: ChainId.KromaSepoliaTest,
+        name: 'Kroma Sepolia Testnet',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            address: '0x4200000000000000000000000000000000000001',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x4200000000000000000000000000000000000001',
+            decimal: 18,
+        },
+        scanUrl: 'https://blockscout.sepolia.kroma.network/',
+        scanName: 'Kroma Sepolia Testnet Blockscout',
+        vmType: 'EVM',
+        rpcUrl: 'https://api.sepolia.kroma.network/',
+    },
+    {
+        id: ChainId.Kroma,
+        name: 'Kroma',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            address: '0x4200000000000000000000000000000000000001',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x4200000000000000000000000000000000000001',
+            decimal: 18,
+        },
+        scanUrl: 'https://blockscout.kroma.network/',
+        scanName: 'Kroma Mainnet Blockscout',
+        vmType: 'EVM',
+        rpcUrl: 'https://api.kroma.network/',
+    },
+    {
+        id: ChainId.OpBNB,
+        name: 'OpBNB',
+        tokenSymbol: 'BNB',
+        token: {
+            symbol: 'BNB',
+            address: '0x4200000000000000000000000000000000000006',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WBNB',
+        wrappedToken: {
+            symbol: 'WBNB',
+            address: '0x4200000000000000000000000000000000000006',
+            decimal: 18,
+        },
+        scanUrl: 'https://mainnet.opbnbscan.com/',
+        scanName: 'OpBNB Mainnet scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://opbnb-mainnet-rpc.bnbchain.org/',
     },
 ];
 
