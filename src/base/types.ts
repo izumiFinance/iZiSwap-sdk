@@ -42,6 +42,8 @@ export enum ChainId {
     Loot = 5151706,
     OpBNB = 204,
     Kroma = 255,
+    Manta = 169,
+    Scroll = 534352,
 
     // testnet
     Rinkeby = 4,
@@ -57,6 +59,8 @@ export enum ChainId {
     MantaTest = 3441005,
     StagingFastActiveBellatrix = 1351057110,
     KromaSepoliaTest = 2358,
+    GasZeroGoerliL2 = 12021,
+    ZetaTest = 7001,
 }
 
 
@@ -491,6 +495,28 @@ const initialChains: BaseChain[] = [
         blockDeltaU: 12,
     },
     {
+        id: ChainId.Scroll,
+        name: 'Scroll Mainnet',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            address: '0x5300000000000000000000000000000000000004',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x5300000000000000000000000000000000000004',
+            decimal: 18,
+        },
+        scanUrl: 'https://blockscout.scroll.io',
+        scanName: 'scroll scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.scroll.io',
+        blockDelta: 12,
+        blockDeltaU: 12,
+    },
+    {
         id: ChainId.Icplaza,
         name: 'Icplaza',
         tokenSymbol: 'ICT',
@@ -782,6 +808,26 @@ const initialChains: BaseChain[] = [
         rpcUrl: 'https://api.kroma.network/',
     },
     {
+        id: ChainId.Manta,
+        name: 'Manta Pacific',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            address: '0x0Dc808adcE2099A9F62AA87D9670745AbA741746',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x0Dc808adcE2099A9F62AA87D9670745AbA741746',
+            decimal: 18,
+        },
+        scanUrl: 'https://manta-pacific.calderaexplorer.xyz/',
+        scanName: 'manta scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://manta-pacific.calderachain.xyz/http',
+    },
+    {
         id: ChainId.OpBNB,
         name: 'OpBNB',
         tokenSymbol: 'BNB',
@@ -800,6 +846,46 @@ const initialChains: BaseChain[] = [
         scanName: 'OpBNB Mainnet scan',
         vmType: 'EVM',
         rpcUrl: 'https://opbnb-mainnet-rpc.bnbchain.org/',
+    },
+    {
+        id: ChainId.GasZeroGoerliL2,
+        name: 'GasZeroGoerliL2',
+        tokenSymbol: 'GAS0',
+        token: {
+            symbol: 'GAS0',
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WGAS0',
+        wrappedToken: {
+            symbol: 'GAS0',
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+            decimal: 18,
+        },
+        scanUrl: 'https://scangoerlitest.gaszero.com/',
+        scanName: 'GasZero GoerliL2 scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://goerlitest.gaszero.com/',
+    },
+    {
+        id: ChainId.ZetaTest,
+        name: 'Zeta Testnet',
+        tokenSymbol: 'aZETA',
+        token: {
+            symbol: 'aZETA',
+            address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+            decimal: 18,
+        },
+        wrappedTokenSymbol: 'WZETA',
+        wrappedToken: {
+            symbol: 'WZETA',
+            address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+            decimal: 18,
+        },
+        scanUrl: 'https://zetachain-athens-3.blockscout.com/',
+        scanName: 'zeta testnet scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public/',
     },
 ];
 
