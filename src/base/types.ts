@@ -44,6 +44,7 @@ export enum ChainId {
     Kroma = 255,
     Manta = 169,
     Scroll = 534352,
+    ZKFair = 42766,
 
     // testnet
     Rinkeby = 4,
@@ -61,6 +62,8 @@ export enum ChainId {
     KromaSepoliaTest = 2358,
     GasZeroGoerliL2 = 12021,
     ZetaTest = 7001,
+    ZKFairTest = 43851,
+    X1Test = 195,
 }
 
 
@@ -886,6 +889,66 @@ const initialChains: BaseChain[] = [
         scanName: 'zeta testnet scan',
         vmType: 'EVM',
         rpcUrl: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public/',
+    },
+    {
+        id: ChainId.X1Test,
+        name: 'X1 Testnet',
+        tokenSymbol: 'OKB',
+        token: {
+            symbol: 'OKB',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        wrappedTokenSymbol: 'WOKB',
+        wrappedToken: {
+            symbol: 'WOKB',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        scanUrl: 'https://www.oklink.com/x1-test/',
+        scanName: 'x1 testnet',
+        vmType: 'EVM',
+        rpcUrl: 'https://testrpc.x1.tech/',
+    },
+    {
+        id: ChainId.ZKFairTest,
+        name: 'zkfair Testnet',
+        tokenSymbol: 'USDC',
+        token: {
+            symbol: 'USDC',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        wrappedTokenSymbol: 'WUSDC',
+        wrappedToken: {
+            symbol: 'WUSDC',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        scanUrl: 'https://testnet-scan.zkfair.io',
+        scanName: 'zkfair testnet',
+        vmType: 'EVM',
+        rpcUrl: 'https://testnet-rpc.zkfair.io/',
+    },
+    {
+        id: ChainId.ZKFair,
+        name: 'ZKFair',
+        tokenSymbol: 'USDC',
+        token: {
+            symbol: 'USDC',
+            decimal: 18,
+            address: '0xD33Db7EC50A98164cC865dfaa64666906d79319C',
+        },
+        wrappedTokenSymbol: 'WUSDC',
+        wrappedToken: {
+            symbol: 'WUSDC',
+            decimal: 18,
+            address: '0xD33Db7EC50A98164cC865dfaa64666906d79319C',
+        },
+        scanUrl: 'https://scan.zkfair.io',
+        scanName: 'ZKFair mainnet explorer',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.zkfair.io',
     },
 ];
 
