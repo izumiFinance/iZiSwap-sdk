@@ -45,6 +45,7 @@ export enum ChainId {
     Manta = 169,
     Scroll = 534352,
     ZKFair = 42766,
+    Zeta = 7000,
 
     // testnet
     Rinkeby = 4,
@@ -57,6 +58,7 @@ export enum ChainId {
     MantleTest = 5001,
     ScrollTestL2 = 534351,
     LineaTest = 59140,
+    OpsideTestRollux = 12008,
     MantaTest = 3441005,
     StagingFastActiveBellatrix = 1351057110,
     KromaSepoliaTest = 2358,
@@ -64,6 +66,7 @@ export enum ChainId {
     ZetaTest = 7001,
     ZKFairTest = 43851,
     X1Test = 195,
+    MumbaiTest = 80001,
 }
 
 
@@ -670,6 +673,26 @@ const initialChains: BaseChain[] = [
         rpcUrl: 'https://ultron-rpc.net',
     },
     {
+        id: ChainId.OpsideTestRollux,
+        name: 'Opside Public zkEVM Testnet',
+        tokenSymbol: 'IDE',
+        token: {
+            symbol: 'IDE',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        wrappedTokenSymbol: 'WIDE',
+        wrappedToken: {
+            symbol: 'WIDE',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        scanUrl: 'https://public.zkevm.opside.info',
+        scanName: 'Opside Rollux Testnet Explorer',
+        vmType: 'zkEVM',
+        rpcUrl: 'https://pre-alpha-zkrollup-rpc.opside.network/public',
+    },
+    {
         id: ChainId.Base,
         name: 'Base',
         tokenSymbol: 'ETH',
@@ -890,6 +913,27 @@ const initialChains: BaseChain[] = [
         vmType: 'EVM',
         rpcUrl: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public/',
     },
+
+    {
+        id: ChainId.Zeta,
+        name: 'Zeta Mainnet',
+        tokenSymbol: 'ZETA',
+        token: {
+            symbol: 'ZETA',
+            decimal: 18,
+            address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+        },
+        wrappedTokenSymbol: 'WZETA',
+        wrappedToken: {
+            symbol: 'WZETA',
+            decimal: 18,
+            address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+        },
+        scanUrl: 'https://zetachain.blockscout.com/',
+        scanName: 'zeta blockscout',
+        vmType: 'EVM',
+        rpcUrl: 'https://zetachain-evm.blockpi.network/v1/rpc/public/',
+    },
     {
         id: ChainId.X1Test,
         name: 'X1 Testnet',
@@ -949,6 +993,27 @@ const initialChains: BaseChain[] = [
         scanName: 'ZKFair mainnet explorer',
         vmType: 'EVM',
         rpcUrl: 'https://rpc.zkfair.io',
+    },
+
+    {
+        id: ChainId.MumbaiTest,
+        name: 'MumbaiTest',
+        tokenSymbol: 'MATIC',
+        token: {
+            symbol: 'MATIC',
+            decimal: 18,
+            address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
+        },
+        wrappedTokenSymbol: 'WMATIC',
+        wrappedToken: {
+            symbol: 'WMATIC',
+            decimal: 18,
+            address: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
+        },
+        scanUrl: 'https://mumbai.polygonscan.com/',
+        scanName: 'Mumbai testnet scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc-mumbai.maticvigil.com',
     },
 ];
 
