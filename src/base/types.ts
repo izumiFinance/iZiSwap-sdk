@@ -46,6 +46,7 @@ export enum ChainId {
     Scroll = 534352,
     ZKFair = 42766,
     Zeta = 7000,
+    Merlin = 4200,
 
     // testnet
     Rinkeby = 4,
@@ -67,6 +68,10 @@ export enum ChainId {
     ZKFairTest = 43851,
     X1Test = 195,
     MumbaiTest = 80001,
+    TaikoKatlaL2Test = 167008,
+    MorphTest = 2710,
+    BeraTest = 80085,
+    MerlinTest = 686868,
 }
 
 
@@ -1014,6 +1019,107 @@ const initialChains: BaseChain[] = [
         scanName: 'Mumbai testnet scan',
         vmType: 'EVM',
         rpcUrl: 'https://rpc-mumbai.maticvigil.com',
+    },
+
+    {
+        id: ChainId.TaikoKatlaL2Test,
+        name: 'Taiko Katla L2 testnet',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+        },
+        scanUrl: 'https://explorer.katla.taiko.xyz/',
+        scanName: 'taiko katla test l2 explore',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.katla.taiko.xyz',
+    },
+    {
+        id: ChainId.MorphTest,
+        name: 'Morph testnet',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0xC6C7c2edF70A3245ad6051E93809162B9758ce08',
+        },
+        scanUrl: 'https://explorer-testnet.morphl2.io/',
+        scanName: 'morph testnet explore',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc-testnet.morphl2.io',
+    },
+    {
+        id: ChainId.BeraTest,
+        name: 'Bera testnet',
+        tokenSymbol: 'BERA',
+        token: {
+            symbol: 'BERA',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        wrappedTokenSymbol: 'WBERA',
+        wrappedToken: {
+            symbol: 'WBERA',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        scanUrl: 'https://artio.beratrail.io/',
+        scanName: 'bera testnet explore',
+        vmType: 'EVM',
+        rpcUrl: 'https://artio.rpc.berachain.com/',
+    },
+    {
+        id: ChainId.Merlin,
+        name: 'Merlin',
+        tokenSymbol: 'BTC',
+        token: {
+            symbol: 'BTC',
+            decimal: 18,
+            address: '0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA',
+        },
+        wrappedTokenSymbol: 'WBTC',
+        wrappedToken: {
+            symbol: 'WBTC',
+            decimal: 18,
+            address: '0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA',
+        },
+        scanUrl: 'https://scan.merlinchain.io/',
+        scanName: 'merlin explorer',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.merlinchain.io/',
+    },
+    {
+        id: ChainId.MerlinTest,
+        name: 'Merlin Testnet',
+        tokenSymbol: 'BTC',
+        token: {
+            symbol: 'BTC',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        wrappedTokenSymbol: 'WBTC',
+        wrappedToken: {
+            symbol: 'WBTC',
+            decimal: 18,
+            address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+        },
+        scanUrl: 'https://testnet-scan.merlinchain.io/',
+        scanName: 'merlin testnet explorer',
+        vmType: 'EVM',
+        rpcUrl: 'https://testnet-rpc.merlinchain.io',
     },
 ];
 
