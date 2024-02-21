@@ -77,7 +77,8 @@ export const getMintCall = (
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {mintCalling: multicall, options: buildSendingParams(chain, options, gasPrice)}
+    const mintMulticall = liquidityManagerContract.methods.multicall(multicall)
+    return {mintCalling: mintMulticall, options: buildSendingParams(chain, options, gasPrice)}
 }
 
 
@@ -143,7 +144,8 @@ export const getAddLiquidityCall = (
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {addLiquidityCalling: multicall, options: buildSendingParams(chain, options, gasPrice)}
+    const addMulticall = liquidityManagerContract.methods.multicall(multicall)
+    return {addLiquidityCalling: addMulticall, options: buildSendingParams(chain, options, gasPrice)}
 }
 
 export const getDecLiquidityCall = (

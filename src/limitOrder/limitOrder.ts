@@ -60,7 +60,8 @@ export const getNewLimOrderCall = (
     for (const c of callings) {
         multicall.push(c.encodeABI())
     }
-    return {newLimOrderCalling: multicall, options: buildSendingParams(chain, options, gasPrice)}
+    const newMulticall = limitOrderManager.methods.multicall(multicall)
+    return {newLimOrderCalling: newMulticall, options: buildSendingParams(chain, options, gasPrice)}
 }
 
 export const getUpdateOrderCall = (
