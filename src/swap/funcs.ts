@@ -178,7 +178,7 @@ export const getSwapChainWithExactInputCall = (
     gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
@@ -238,7 +238,7 @@ export const getSwapChainWithExactOutputCall = (
     gasPrice: number | string
 ) : {swapCalling: any, options: any} => {
     const deadline = params.deadline ?? '0xffffffff'
-    const strictERC20Token = params.strictERC20Token ?? false
+    const strictERC20Token = params.strictERC20Token
     const options = {
         from: account,
         value: '0',
