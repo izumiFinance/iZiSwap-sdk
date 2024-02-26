@@ -72,6 +72,7 @@ export enum ChainId {
     MorphTest = 2710,
     BeraTest = 80085,
     MerlinTest = 686868,
+    BlastSepoliaTest = 168587773,
 }
 
 
@@ -1120,6 +1121,27 @@ const initialChains: BaseChain[] = [
         scanName: 'merlin testnet explorer',
         vmType: 'EVM',
         rpcUrl: 'https://testnet-rpc.merlinchain.io',
+    },
+
+    {
+        id: ChainId.BlastSepoliaTest,
+        name: 'Blast Sepolia Test',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3',
+        },
+        scanUrl: 'https://testnet.blastscan.io',
+        scanName: 'blast sepolia testnet scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://sepolia.blast.io',
     },
 ];
 
