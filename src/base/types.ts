@@ -73,6 +73,7 @@ export enum ChainId {
     BeraTest = 80085,
     MerlinTest = 686868,
     BlastSepoliaTest = 168587773,
+    Blast = 81457,
 }
 
 
@@ -1130,18 +1131,38 @@ const initialChains: BaseChain[] = [
         token: {
             symbol: 'ETH',
             decimal: 18,
-            address: '0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3',
+            address: '0x4200000000000000000000000000000000000023',
         },
         wrappedTokenSymbol: 'WETH',
         wrappedToken: {
             symbol: 'WETH',
             decimal: 18,
-            address: '0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3',
+            address: '0x4200000000000000000000000000000000000023',
         },
         scanUrl: 'https://testnet.blastscan.io',
         scanName: 'blast sepolia testnet scan',
         vmType: 'EVM',
         rpcUrl: 'https://sepolia.blast.io',
+    },
+    {
+        id: ChainId.Blast,
+        name: 'Blast',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0x4300000000000000000000000000000000000004',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0x4300000000000000000000000000000000000004',
+        },
+        scanUrl: 'https://blastscan.io',
+        scanName: 'blast scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://blast.blockpi.network/v1/rpc/public',
     },
 ];
 
