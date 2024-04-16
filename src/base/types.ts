@@ -47,6 +47,10 @@ export enum ChainId {
     ZKFair = 42766,
     Zeta = 7000,
     Merlin = 4200,
+    Blast = 81457,
+    ZklinkNova = 810180,
+    Mode = 34443,
+    XLayer = 196,
 
     // testnet
     Rinkeby = 4,
@@ -73,7 +77,8 @@ export enum ChainId {
     BeraTest = 80085,
     MerlinTest = 686868,
     BlastSepoliaTest = 168587773,
-    Blast = 81457,
+    ZklinkNovaTest = 810182,
+    ModeSepoliaTest = 919,
 }
 
 
