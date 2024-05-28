@@ -51,6 +51,9 @@ export enum ChainId {
     ZklinkNova = 810180,
     Mode = 34443,
     XLayer = 196,
+    Cyber = 7560,
+    Taiko = 167000,
+    Klaytn = 8217,
 
     // testnet
     Rinkeby = 4,
@@ -1049,6 +1052,26 @@ const initialChains: BaseChain[] = [
         rpcUrl: 'https://rpc.katla.taiko.xyz',
     },
     {
+        id: ChainId.Taiko,
+        name: 'Taiko',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0xA51894664A773981C6C112C43ce576f315d5b1B6',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0xA51894664A773981C6C112C43ce576f315d5b1B6',
+        },
+        scanUrl: 'https://taikoscan.network',
+        scanName: 'taiko scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.mainnet.taiko.xyz',
+    },
+    {
         id: ChainId.MorphTest,
         name: 'Morph testnet',
         tokenSymbol: 'ETH',
@@ -1288,6 +1311,46 @@ const initialChains: BaseChain[] = [
         scanName: 'Mode Sepolia Testnet Explorer',
         vmType: 'EVM',
         rpcUrl: 'https://sepolia.mode.network',
+    },
+    {
+        id: ChainId.Cyber,
+        name: 'Cyber',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            decimal: 18,
+            address: '0x4200000000000000000000000000000000000006',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            decimal: 18,
+            address: '0x4200000000000000000000000000000000000006',
+        },
+        scanUrl: 'https://cyber-explorer.alt.technology/',
+        scanName: 'Cyber Chain Mainnet Explorer',
+        vmType: 'EVM',
+        rpcUrl: 'https://cyber.alt.technology/',
+    },
+    {
+        id: ChainId.Klaytn,
+        name: 'Klaytn',
+        tokenSymbol: 'KLAY',
+        token: {
+            symbol: 'KLAY',
+            decimal: 18,
+            address: '0x19Aac5f612f524B754CA7e7c41cbFa2E981A4432',
+        },
+        wrappedTokenSymbol: 'WKLAY',
+        wrappedToken: {
+            symbol: 'WKLAY',
+            decimal: 18,
+            address: '0x19Aac5f612f524B754CA7e7c41cbFa2E981A4432',
+        },
+        scanUrl: 'https://klaytnscope.com/',
+        scanName: 'Klaytn Chain Mainnet Scope',
+        vmType: 'EVM',
+        rpcUrl: 'https://klaytn.drpc.org',
     },
 ];
 
