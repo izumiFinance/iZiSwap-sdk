@@ -19,8 +19,6 @@ async function main(): Promise<void> {
     const testAAddress = '0xCFD8A067e1fa03474e79Be646c5f6b6A27847399'
     const testBAddress = '0xAD1F11FBB288Cd13819cCB9397E59FAAB4Cdc16F'
 
-    // we can first 
-
     // feeRate = feeContractNumber / 1e6 / 100;
     // etc, 3000 means 0.3%
     // you should choose a proper feeRate of new pool
