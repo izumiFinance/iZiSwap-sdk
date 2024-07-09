@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     const testAAddress = '0xCFD8A067e1fa03474e79Be646c5f6b6A27847399'
     const testBAddress = '0xAD1F11FBB288Cd13819cCB9397E59FAAB4Cdc16F'
 
-    // feeRate = feeContractNumber / 1e6 / 100;
+    // feeRate = feeContractNumber / 1e6
     // etc, 3000 means 0.3%
     // you should choose a proper feeRate of new pool
     // which should be supported by factory on that chain
@@ -33,7 +33,7 @@ async function main(): Promise<void> {
         console.log('pool has been created! Address: ', poolAddress);
         return;
     }
-    // you can choose a proper init point, which
+    // you can choose a proper initial point, which
     // specify init price of tokenX (by tokenY)
     const initPointXByY = 100;
     const gasPrice = '5000000000';
