@@ -4,7 +4,7 @@ import { getEVMContract } from "../base/utils"
 import poolAbi from './poolAbi.json'
 import factoryAbi from './factoryAbi.json'
 import { State } from "./types"
-import { pointDeltaRoundingDown, pointDeltaRoundingUp } from "../base"
+import { BaseChain, buildSendingParams, pointDeltaRoundingDown, pointDeltaRoundingUp, TokenInfoFormatted } from "../base"
 import JSBI from "jsbi"
 import { PoolErrCode, poolInvariant } from "./error"
 
@@ -16,6 +16,46 @@ export const getFactoryContract = (address: string, web3: Web3): Contract => {
     return getEVMContract(factoryAbi, address, web3);
 }
 
+export const getCreatePoolCall = (
+    factoryContract: Contract,
+    tokenX: string,
+    tokenY: string,
+    feeContractNumber: Number,
+    initPointXByY: Number,
+    account: string,
+    chain: BaseChain,
+    gasPrice: number | string,
+): {createPoolCalling: any, options: any} => {
+    let createPoolCalling = undefined;
+    let options = undefined;
+    if (tokenX.toLowerCase() > tokenY.toLowerCase()) {
+        return {createPoolCalling, options};
+    }
+    options = buildSendingParams(chain, {
+        from: account,
+        value: '0',
+        maxFeePerGas: gasPrice,
+    }, gasPrice);
+    createPoolCalling = factoryContract.methods.newPool(
+        tokenX, tokenY, feeContractNumber, initPointXByY
+    )
+    return {createPoolCalling, options};
+}
+
+
+export const getPoolAddress = async (
+    factoryContract: Contract,
+    tokenAAddress: string,
+    tokenBAddress: string,
+    feeContractNumber: Number,
+): Promise<string> => {
+    const poolAddress = await factoryContract.methods.pool(
+        tokenAAddress, 
+        tokenBAddress, 
+        feeContractNumber
+    ).call();
+    return poolAddress;
+}
 
 export const getPointDelta = async (pool: Contract) : Promise<number> => {
     const pointDelta = Number(await pool.methods.pointDelta().call())
