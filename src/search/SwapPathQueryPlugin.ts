@@ -1,4 +1,4 @@
-import Web3 from "web3"
+import Web3, { ContractAbi } from "web3"
 import { Contract } from 'web3-eth-contract'
 import BigNumber from "bignumber.js"
 import { amount2Decimal, getSwapTokenAddress, point2PriceDecimal, TokenInfoFormatted } from "../base"
@@ -22,7 +22,7 @@ export class SwapPathQueryPlugin {
 
     private preQueryResult: PreQueryResult
     private chainId: number
-    private quoterContract: Contract
+    private quoterContract: Contract<ContractAbi>
     private quoterContractAddress: string
 
     private direction: SwapDirection = undefined as unknown as SwapDirection

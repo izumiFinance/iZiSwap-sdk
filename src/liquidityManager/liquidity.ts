@@ -1,11 +1,11 @@
 import { Contract } from 'web3-eth-contract'
-import { PromiEvent } from 'web3-core';
-import { BaseChain, buildSendingParams, ChainId } from '../base/types'
+import { BaseChain, buildSendingParams } from '../base/types'
 import { AddLiquidityParam, CollectLiquidityParam, DecLiquidityParam, MintParam } from './types'
 import { getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken } from '../base/token';
+import { ContractAbi } from 'web3';
 
 export const getMintCall = (
-    liquidityManagerContract: Contract,
+    liquidityManagerContract: Contract<ContractAbi>,
     account: string,
     chain: BaseChain,
     params: MintParam,
@@ -83,7 +83,7 @@ export const getMintCall = (
 
 
 export const getAddLiquidityCall = (
-    liquidityManagerContract: Contract,
+    liquidityManagerContract: Contract<ContractAbi>,
     account: string,
     chain: BaseChain,
     params: AddLiquidityParam,
@@ -149,7 +149,7 @@ export const getAddLiquidityCall = (
 }
 
 export const getDecLiquidityCall = (
-    liquidityManagerContract: Contract,
+    liquidityManagerContract: Contract<ContractAbi>,
     account: string,
     chain: BaseChain,
     params: DecLiquidityParam,
@@ -172,7 +172,7 @@ export const getDecLiquidityCall = (
 }
 
 export const getCollectLiquidityCall = (
-    liquidityManagerContract: Contract, 
+    liquidityManagerContract: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: CollectLiquidityParam, 

@@ -1,4 +1,4 @@
-import Web3 from "web3"
+import Web3, { ContractAbi } from "web3"
 import { Contract } from 'web3-eth-contract'
 import { getEVMContract, parallelCollect } from "../base/utils"
 import liquidityManagerAbi from './abi.json'
@@ -21,13 +21,13 @@ import { liquidityParams, poolMetas, LiquidityRawParams } from "./library/decode
 import { getPoolContract, getPoolState } from "../pool/funcs"
 import { getLiquidityValue } from "./calc"
 
-export const getLiquidityManagerContract = (address: string, web3: Web3): Contract => {
+export const getLiquidityManagerContract = (address: string, web3: Web3): Contract<ContractAbi> => {
     return getEVMContract(liquidityManagerAbi, address, web3);
 }
 
 
 export const getPoolAddress = async (
-    liquidityManagerContract: Contract, 
+    liquidityManagerContract: Contract<ContractAbi>, 
     tokenA: TokenInfoFormatted, 
     tokenB: TokenInfoFormatted, 
     fee: number) : Promise<string> => {
@@ -35,7 +35,7 @@ export const getPoolAddress = async (
         getSwapTokenAddress(tokenA), 
         getSwapTokenAddress(tokenB), 
         fee
-    ).call()
+    ).call() as string;
     return poolAddress
 }
 
@@ -43,7 +43,7 @@ export const getPoolAddress = async (
 export const fetchLiquiditiesByTokenIds = async (
     chain: BaseChain, 
     web3: Web3, 
-    liquidityManagerContract: Contract,
+    liquidityManagerContract: Contract<ContractAbi>,
     tokenIdList: string[],
     tokenList: TokenInfoFormatted[]
 ): Promise<Liquidity[]> => {
@@ -53,7 +53,7 @@ export const fetchLiquiditiesByTokenIds = async (
     const refreshLiquidityMulticallData = tokenIdList.map(tokId => liquidityManagerContract.methods.decLiquidity(tokId, '0', '0', '0', '0xffffffff').encodeABI());
     const liquidityResult: string[] = await liquidityManagerContract.methods.multicall([...refreshLiquidityMulticallData, ...liquidityMulticallData]).call();
     const liquidities: Liquidity[] = liquidityResult.slice(refreshLiquidityMulticallData.length, liquidityResult.length).map((l, i) => {
-        const liquidityRaw = web3.eth.abi.decodeParameters(liquidityParams, l) as LiquidityRawParams;
+        const liquidityRaw = web3.eth.abi.decodeParameters(liquidityParams, l) as unknown as LiquidityRawParams;
         const liquidity = {
             tokenId: tokenIdList[i],
             leftPoint: Number(liquidityRaw.leftPt),
@@ -75,9 +75,9 @@ export const fetchLiquiditiesByTokenIds = async (
     for (let i = 0; i < metaResult.length; i++) {
         const m = metaResult[i];
         const poolMetaRaw = web3.eth.abi.decodeParameters(poolMetas, m);
-        const tokenXAddress = poolMetaRaw.tokenX;
-        const tokenYAddress = poolMetaRaw.tokenY;
-        const fee = poolMetaRaw.fee;
+        const tokenXAddress = poolMetaRaw.tokenX as string;
+        const tokenYAddress = poolMetaRaw.tokenY as string;
+        const fee = Number(poolMetaRaw.fee);
         liquidities[i] = { ...liquidities[i], fee };
         liquidities[i].tokenX = { ...tokenList.find((e) => getSwapTokenAddress(e).toUpperCase() === tokenXAddress.toUpperCase()) } as unknown as any;
         liquidities[i].tokenY = { ...tokenList.find((e) => getSwapTokenAddress(e).toUpperCase() === tokenYAddress.toUpperCase()) } as unknown as any;
@@ -121,13 +121,13 @@ export const fetchLiquiditiesByTokenIds = async (
 export const fetchLiquiditiesOfAccount = async (
     chain: BaseChain, 
     web3: Web3, 
-    liquidityManagerContract: Contract, 
+    liquidityManagerContract: Contract<ContractAbi>, 
     account: string, 
     tokenList: TokenInfoFormatted[]
 ): Promise<Liquidity[]> => {
 
     // 1. get total nft by account
-    const tokenTotal = await liquidityManagerContract.methods.balanceOf(account).call().then((balance: string) => Number(balance));
+    const tokenTotal = await liquidityManagerContract.methods.balanceOf(account).call().then((balance: any) => Number(balance as string));
     if (tokenTotal <= 0) { 
         return []
     }

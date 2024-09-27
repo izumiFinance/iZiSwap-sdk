@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     const testB = await fetchToken(testBAddress, chain, web3)
     const fee = 2000 // 2000 means 0.2%
 
-    const amountB = new BigNumber(10).times(10 ** testA.decimal)
+    const amountB = new BigNumber(5).times(5 ** testA.decimal)
 
     const params = {
         // pay testA to buy testB
@@ -48,7 +48,7 @@ async function main(): Promise<void> {
     const amountA = inputAmount
     const amountADecimal = amount2Decimal(new BigNumber(amountA), testA)
 
-    console.log(' amountB to desired: ', 10)
+    console.log(' amountB to desired: ', 5)
     console.log(' amountA to pay: ', amountADecimal)
 
     const swapAddress = '0xBd3bd95529e0784aD973FD14928eEDF3678cfad8'
@@ -102,7 +102,7 @@ async function main(): Promise<void> {
             ...options,
             to: swapAddress,
             data: swapCalling.encodeABI(),
-            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+            gas: new BigNumber(Number(gasLimit) * 1.1).toFixed(0, 2),
         }, 
         privateKey
     )

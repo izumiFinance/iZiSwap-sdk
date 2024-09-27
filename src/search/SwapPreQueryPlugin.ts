@@ -1,4 +1,4 @@
-import Web3 from "web3"
+import Web3, { ContractAbi } from "web3"
 import { Contract } from 'web3-eth-contract'
 import { isAddress } from "@ethersproject/address"
 import BigNumber from "bignumber.js"
@@ -62,10 +62,10 @@ export class SwapPreQueryPlugin {
     private web3: Web3
 
     private chainId: number
-    private liquidityManagerContract: Contract
+    private liquidityManagerContract: Contract<ContractAbi>
     private liquidityManagerAddress: string
     // only for encode abi of calling and decode method result
-    private fakePoolContract: Contract
+    private fakePoolContract: Contract<ContractAbi>
 
     private poolBlackSet: Set<string>
     private midTokenList: TokenInfoFormatted[]

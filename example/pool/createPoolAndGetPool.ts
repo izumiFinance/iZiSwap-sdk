@@ -7,7 +7,7 @@ import { BigNumber } from 'bignumber.js'
 
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
-    const rpc = 'https://data-seed-prebsc-1-s3.binance.org:8545/'
+    const rpc = 'https://bsc-testnet-rpc.publicnode.com	'
     console.log('rpc: ', rpc)
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
     const account =  web3.eth.accounts.privateKeyToAccount(privateKey)
@@ -82,7 +82,7 @@ async function main(): Promise<void> {
             ...options,
             to: factoryAddress,
             data: createPoolCalling.encodeABI(),
-            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+            gas: new BigNumber(Number(gasLimit) * 1.1).toFixed(0, 2),
         }, 
         privateKey
     )

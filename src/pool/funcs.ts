@@ -1,4 +1,4 @@
-import Web3 from "web3"
+import Web3, { ContractAbi } from "web3"
 import { Contract } from 'web3-eth-contract'
 import { getEVMContract } from "../base/utils"
 import poolAbi from './poolAbi.json'
@@ -8,16 +8,16 @@ import { BaseChain, buildSendingParams, pointDeltaRoundingDown, pointDeltaRoundi
 import JSBI from "jsbi"
 import { PoolErrCode, poolInvariant } from "./error"
 
-export const getPoolContract = (address: string, web3: Web3): Contract => {
+export const getPoolContract = (address: string, web3: Web3): Contract<ContractAbi> => {
     return getEVMContract(poolAbi, address, web3);
 }
 
-export const getFactoryContract = (address: string, web3: Web3): Contract => {
+export const getFactoryContract = (address: string, web3: Web3): Contract<ContractAbi> => {
     return getEVMContract(factoryAbi, address, web3);
 }
 
 export const getCreatePoolCall = (
-    factoryContract: Contract,
+    factoryContract: Contract<ContractAbi>,
     tokenX: string,
     tokenY: string,
     feeContractNumber: Number,
@@ -44,7 +44,7 @@ export const getCreatePoolCall = (
 
 
 export const getPoolAddress = async (
-    factoryContract: Contract,
+    factoryContract: Contract<ContractAbi>,
     tokenAAddress: string,
     tokenBAddress: string,
     feeContractNumber: Number,
@@ -54,18 +54,28 @@ export const getPoolAddress = async (
         tokenBAddress, 
         feeContractNumber
     ).call();
-    return poolAddress;
+    return poolAddress as unknown as string;
 }
 
-export const getPointDelta = async (pool: Contract) : Promise<number> => {
+export const getPointDelta = async (pool: Contract<ContractAbi>) : Promise<number> => {
     const pointDelta = Number(await pool.methods.pointDelta().call())
     return pointDelta
 }
 
-export const getPoolState = async (pool: Contract) : Promise<State> => {
+interface RawPoolState {
+    sqrtPrice_96: any,
+    currentPoint: any,
+    observationCurrentIndex: any,
+    observationQueueLen: any,
+    observationNextQueueLen: any,
+    liquidity: any,
+    liquidityX: any,
+}
+
+export const getPoolState = async (pool: Contract<ContractAbi>) : Promise<State> => {
     const {
         sqrtPrice_96, currentPoint, observationCurrentIndex, observationQueueLen, observationNextQueueLen, liquidity, liquidityX
-    } = await pool.methods.state().call()
+    } = (await pool.methods.state().call()) as RawPoolState;
     return {
         sqrtPrice_96: sqrtPrice_96.toString(),
         currentPoint: Number(currentPoint),
@@ -77,10 +87,10 @@ export const getPoolState = async (pool: Contract) : Promise<State> => {
     }
 }
 
-export const getRawDeltaLiquidities = async (pool: Contract, leftPoint: number, rightPoint: number, pointDelta: number): Promise<{deltaLiquidities: JSBI[], point: number[]}> => {
+export const getRawDeltaLiquidities = async (pool: Contract<ContractAbi>, leftPoint: number, rightPoint: number, pointDelta: number): Promise<{deltaLiquidities: JSBI[], point: number[]}> => {
     const leftPointRoundDown = pointDeltaRoundingDown(leftPoint, pointDelta)
     const rightPointRoundUp = pointDeltaRoundingUp(rightPoint, pointDelta)
-    const rawDeltaLiquidities = await pool.methods.liquiditySnapshot(leftPointRoundDown, rightPointRoundUp).call()
+    const rawDeltaLiquidities = await pool.methods.liquiditySnapshot(leftPointRoundDown, rightPointRoundUp).call() as any[]
     const deltaLiquidities = [] as JSBI[]
     const point = [] as number[]
     for (const i in rawDeltaLiquidities) {
@@ -94,7 +104,7 @@ export const getRawDeltaLiquidities = async (pool: Contract, leftPoint: number, 
     return {deltaLiquidities, point}
 }
 
-export const getLiquidities = async (pool: Contract, leftPoint: number, rightPoint: number, targetPoint: number, pointDelta: number, targetLiquidity: string, batchSize: number): Promise<{liquidities: JSBI[], point: number[]}> => {
+export const getLiquidities = async (pool: Contract<ContractAbi>, leftPoint: number, rightPoint: number, targetPoint: number, pointDelta: number, targetLiquidity: string, batchSize: number): Promise<{liquidities: JSBI[], point: number[]}> => {
     
     poolInvariant(leftPoint <= targetPoint, PoolErrCode.LEFTPT_GREATER_THAN_CURRENTPT_ERROR)
     poolInvariant(rightPoint >= targetPoint, PoolErrCode.RIGHTPT_LESS_THAN_CURRENTPT_ERROR)
@@ -143,7 +153,7 @@ export const getLiquidities = async (pool: Contract, leftPoint: number, rightPoi
 
 }
 
-export const getLimitOrders = async (pool: Contract, leftPoint: number, rightPoint: number, pointDelta: number, batchSize: number): Promise<{sellingX: JSBI[], sellingXPoint: number[], sellingY: JSBI[], sellingYPoint: number[]}> => {
+export const getLimitOrders = async (pool: Contract<ContractAbi>, leftPoint: number, rightPoint: number, pointDelta: number, batchSize: number): Promise<{sellingX: JSBI[], sellingXPoint: number[], sellingY: JSBI[], sellingYPoint: number[]}> => {
     const leftPointRoundDown = pointDeltaRoundingDown(leftPoint, pointDelta)
     const rightPointRoundUp = pointDeltaRoundingUp(rightPoint, pointDelta) + pointDelta
     const realRightRoundUp = rightPointRoundUp - pointDelta
@@ -155,7 +165,7 @@ export const getLimitOrders = async (pool: Contract, leftPoint: number, rightPoi
     for (let i = leftPointRoundDown; i < rightPointRoundUp; i += batchSizeRoundingDown) {
         const start = i;
         const end = Math.min(start + batchSizeRoundingDown, rightPointRoundUp)
-        const rawData = await pool.methods.limitOrderSnapshot(start, end).call()
+        const rawData = await pool.methods.limitOrderSnapshot(start, end).call() as any[]
         for (let j = 0; j < rawData.length; j ++) {
             const sellingXStr = rawData[j].sellingX.toString()
             const sellingYStr = rawData[j].sellingY.toString()

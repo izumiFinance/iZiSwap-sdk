@@ -103,7 +103,7 @@ async function main(): Promise<void> {
             ...options,
             to: swapAddress,
             data: swapCalling.encodeABI(),
-            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+            gas: new BigNumber(Number(gasLimit) * 1.1).toFixed(0, 2),
         }, 
         privateKey
     )

@@ -1,4 +1,4 @@
-import Web3 from "web3"
+import Web3, { ContractAbi } from "web3"
 import { Contract } from 'web3-eth-contract'
 import { fetchToken, getSwapTokenAddress } from "../base"
 import { BaseChain, TokenInfoFormatted } from "../base"
@@ -9,12 +9,12 @@ import { LimitOrder } from "./types"
 import { BigNumber } from 'bignumber.js'
 import { point2PriceUndecimal, priceUndecimal2PriceDecimal } from "../base/price"
 
-export const getLimitOrderManagerContract = (address: string, web3: Web3): Contract => {
+export const getLimitOrderManagerContract = (address: string, web3: Web3): Contract<ContractAbi> => {
     return getEVMContract(limitOrderAbi, address, web3)
 }
 
 export const getPoolAddress = async (
-    limitOrderManager: Contract, 
+    limitOrderManager: Contract<ContractAbi>, 
     tokenA: TokenInfoFormatted, 
     tokenB: TokenInfoFormatted, 
     fee: number) : Promise<string> => {
@@ -22,14 +22,19 @@ export const getPoolAddress = async (
         getSwapTokenAddress(tokenA), 
         getSwapTokenAddress(tokenB), 
         fee
-    ).call()
+    ).call() as string;
     return poolAddress
+}
+
+interface RawPoolMeta {
+    tokenX: string;
+    tokenY: string;
 }
 
 export const fetchLimitOrderOfAccount = async(
     chain: BaseChain,
     web3: Web3,
-    limitOrderManager: Contract,
+    limitOrderManager: Contract<ContractAbi>,
     account: string,
     tokenList: TokenInfoFormatted[]
 ): Promise< { activeOrders: LimitOrder[], deactiveOrders: LimitOrder[] }> => {
@@ -40,11 +45,12 @@ export const fetchLimitOrderOfAccount = async(
     limitOrderMulticallData.push(limitOrderManager.methods.getDeactiveOrders(account).encodeABI());
     const limitOrderListResult: string[] = await limitOrderManager.methods.multicall(limitOrderMulticallData).call();
 
-    const getActiveOrderResult = decodeMethodResult(limitOrderManager, 'getActiveOrders', limitOrderListResult[0])
-    const getDeactiveOrderResult = decodeMethodResult(limitOrderManager, 'getDeactiveOrders', limitOrderListResult[1])
+    const getActiveOrderResult = decodeMethodResult(web3, limitOrderAbi, 'getActiveOrders', limitOrderListResult[0])
+    const getDeactiveOrderResult = decodeMethodResult(web3, limitOrderAbi, 'getDeactiveOrders', limitOrderListResult[1])
+
     const activeOrderIdx = getActiveOrderResult.activeIdx
     const activeLimitOrder = getActiveOrderResult.activeLimitOrder
-    const deactiveLimitOrder = getDeactiveOrderResult
+    const deactiveLimitOrder = getDeactiveOrderResult.deactiveLimitOrder
     const allOrders = [...activeLimitOrder, ...deactiveLimitOrder];
     if (allOrders.length <= 0) { return {activeOrders:[], deactiveOrders:[]}; }
 
@@ -56,7 +62,7 @@ export const fetchLimitOrderOfAccount = async(
     const poolMetaMulticallData = allOrders.map(order => limitOrderManager.methods.poolMetas(order.poolId).encodeABI());
     const poolAddrMulticallData = allOrders.map(order => limitOrderManager.methods.poolAddrs(order.poolId).encodeABI());
     const poolResult: string[] = await limitOrderManager.methods.multicall([...poolMetaMulticallData, ...poolAddrMulticallData]).call();
-    const poolMetaList = poolResult.slice(0, orderTotal).map(p => web3.eth.abi.decodeParameters(poolMetas, p));
+    const poolMetaList = poolResult.slice(0, orderTotal).map(p => web3.eth.abi.decodeParameters(poolMetas, p)) as any[] as RawPoolMeta[];
     const poolAddressList = poolResult.slice(orderTotal, orderTotal * 2).map(p => String(web3.eth.abi.decodeParameter('address', p)));
 
     const updateOrderMulticallData = activeOrderIdx.map((idx: string) => limitOrderManager.methods.updateOrder(idx).encodeABI());
@@ -67,7 +73,7 @@ export const fetchLimitOrderOfAccount = async(
     const deactiveOrders: LimitOrder[] = []
 
     for (let i = 0; i < orderTotal; i ++) {
-        const orderPoolMeta = poolMetaList[i]
+        const orderPoolMeta = poolMetaList[i];
         let tokenX = { ...tokenList.find((e) => getSwapTokenAddress(e).toLowerCase() === orderPoolMeta.tokenX.toLowerCase()) } as TokenInfoFormatted;
         let tokenY = { ...tokenList.find((e) => getSwapTokenAddress(e).toLowerCase() === orderPoolMeta.tokenY.toLowerCase()) } as TokenInfoFormatted;
         if (!tokenX.symbol) {
@@ -78,8 +84,8 @@ export const fetchLimitOrderOfAccount = async(
         }
         if (i < activeOrderTotal) {
             const earn: string = activeLimitOrder[i].earn
-            const updateEarn: string = decodeMethodResult(limitOrderManager, 'updateOrder', updateOrderResult[i])
-            const pending = new BigNumber(updateEarn).minus(earn).toFixed(0)
+            const updateEarn = decodeMethodResult(web3, limitOrderAbi, 'updateOrder', updateOrderResult[i])
+            const pending = new BigNumber(updateEarn.earn).minus(earn).toFixed(0)
 
             const sellingRemain: string = activeLimitOrder[i].sellingRemain
             const accSellingDec: string = activeLimitOrder[i].accSellingDec
@@ -162,8 +168,8 @@ export const fetchLimitOrderOfAccount = async(
 }
 
 export const getDeactiveSlot = async(
-    limitOrderManager: Contract,
+    limitOrderManager: Contract<ContractAbi>,
     account: string
 ): Promise<string> => {
-    return (await limitOrderManager.methods.getDeactiveSlot(account).call()).toString()
+    return (await limitOrderManager.methods.getDeactiveSlot(account).call() as any).toString()
 }

@@ -1,6 +1,5 @@
 
-import Web3 from 'web3';
-import { PromiEvent } from 'web3-core';
+import Web3, { ContractAbi } from 'web3';
 import { Contract } from 'web3-eth-contract';
 
 import {BaseChain, getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken, TokenInfoFormatted} from '../base'
@@ -10,12 +9,12 @@ import { getEVMContract, getTokenChainPath, getTokenChainPathReverse, buildSendi
 import swapAbi from './abi.json';
 import { SwapChainWithExactInputParams, SwapChainWithExactOutputParams, SwapSingleWithExactInputParams, SwapSingleWithExactOutputParams } from './types';
 
-export const getSwapContract = (address: string, web3: Web3): Contract => {
+export const getSwapContract = (address: string, web3: Web3): Contract<ContractAbi> => {
     return getEVMContract(swapAbi, address, web3);
 };
 
 export const getSwapSingleWithExactInputCall = (
-    swapContract: Contract, 
+    swapContract: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: SwapSingleWithExactInputParams, 
@@ -93,7 +92,7 @@ export const getSwapSingleWithExactInputCall = (
 }
 
 export const getSwapSingleWithExactOutputCall = (
-    swapContract: Contract, 
+    swapContract: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: SwapSingleWithExactOutputParams, 
@@ -171,7 +170,7 @@ export const getSwapSingleWithExactOutputCall = (
 }
 
 export const getSwapChainWithExactInputCall = (
-    swapContract: Contract, 
+    swapContract: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: SwapChainWithExactInputParams, 
@@ -231,7 +230,7 @@ export const getSwapChainWithExactInputCall = (
 
 
 export const getSwapChainWithExactOutputCall = (
-    swapContract: Contract, 
+    swapContract: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: SwapChainWithExactOutputParams, 

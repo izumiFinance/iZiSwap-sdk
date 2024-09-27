@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { CallingProperty, DagNode, Path, PathQueryCalling, PathQueryParams, PathQueryResult, PreQueryParams, PreQueryResult, SwapDirection } from './types';
 import { SwapPreQueryPlugin } from './SwapPreQueryPlugin';
 import { SwapPathQueryPlugin } from './SwapPathQueryPlugin';
+import { ContractAbi } from 'web3';
 
 function checkNodeCanVisit(dagNode: DagNode, visited: number): boolean {
     if (!dagNode.preIdx) {
@@ -19,8 +20,12 @@ function checkFinish(dagNodes: DagNode[], visited: number): boolean {
     return true
 }
 
-async function multiQuery(multicall: Contract, calling: string[], targetAddress: string[]): Promise<{successes: boolean[], results: string[]}> {
-    const result = await multicall.methods.multicall(targetAddress, calling).call()
+async function multiQuery(multicall: Contract<ContractAbi>, calling: string[], targetAddress: string[]): Promise<{successes: boolean[], results: string[]}> {
+    interface RawResult {
+        successes: any
+        results: any
+    }
+    const result = await multicall.methods.multicall(targetAddress, calling).call() as RawResult
     return {
         successes: result.successes,
         results: result.results
@@ -120,7 +125,7 @@ function checkNewPathQueryBetter(
 }
 
 async function _doPathQuery(
-    multicall: Contract, 
+    multicall: Contract<ContractAbi>, 
     callings: PathQueryCalling[],
     callingPath: Path[],
     pathQueryPlugins: SwapPathQueryPlugin,

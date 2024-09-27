@@ -59,7 +59,7 @@ async function main(): Promise<void> {
         gasPrice
     )
 
-    const gasLimit = await collectLimitOrderCalling.estimateGas(options)
+    const gasLimit = Number(await collectLimitOrderCalling.estimateGas(options))
     console.log('gas limit: ', gasLimit)
 
     // for metamask or other explorer's wallet provider

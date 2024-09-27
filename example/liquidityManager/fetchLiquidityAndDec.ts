@@ -86,7 +86,7 @@ async function main(): Promise<void> {
             ...options,
             to: liquidityManagerAddress,
             data: decLiquidityCalling.encodeABI(),
-            gas: new BigNumber(gasLimit * 1.1).toFixed(0, 2),
+            gas: new BigNumber(Number(gasLimit) * 1.1).toFixed(0, 2),
         }, 
         privateKey
     )

@@ -2,9 +2,10 @@ import { Contract } from 'web3-eth-contract'
 import { getSwapTokenAddress, isGasOrWrappedGasToken, isGasToken } from '../base/token'
 import { BaseChain, buildSendingParams } from '../base/types'
 import { AddLimOrderParam, CollectLimOrderParam } from './types'
+import { ContractAbi } from 'web3'
 
 export const getNewLimOrderCall = (
-    limitOrderManager: Contract,
+    limitOrderManager: Contract<ContractAbi>,
     account: string,
     chain: BaseChain,
     params: AddLimOrderParam,
@@ -65,7 +66,7 @@ export const getNewLimOrderCall = (
 }
 
 export const getUpdateOrderCall = (
-    limitOrderManager: Contract,
+    limitOrderManager: Contract<ContractAbi>,
     idx: string,
     account: string,
     chain: BaseChain,
@@ -83,7 +84,7 @@ export const getUpdateOrderCall = (
 }
 
 export const getDecLimOrderCall = (
-    limitOrderManager: Contract,
+    limitOrderManager: Contract<ContractAbi>,
     orderIdx: string,
     decAmount: string,
     deadline: string,
@@ -100,7 +101,7 @@ export const getDecLimOrderCall = (
 }
 
 export const getCollectLimitOrderCall = (
-    limitOrderManager: Contract, 
+    limitOrderManager: Contract<ContractAbi>, 
     account: string,
     chain: BaseChain,
     params: CollectLimOrderParam, 

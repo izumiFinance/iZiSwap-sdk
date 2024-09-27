@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import Web3, { ContractAbi } from "web3";
 import { Contract } from "web3-eth-contract";
 import { AbiItem } from "web3-utils";
 import { TokenInfoFormatted } from "./types";
@@ -10,8 +10,8 @@ export const getEVMContract = (
     abi: any,
     address: string,
     web3: Web3
-): Contract => {
-    return new web3!.eth.Contract(abi as unknown as AbiItem, address, {});
+): Contract<ContractAbi> => {
+    return new web3!.eth.Contract(abi, address, {});
 }
 
 function num2Hex(n: number) {
@@ -69,12 +69,13 @@ export const getTokenChainPathReverse = (tokenChain: TokenInfoFormatted[], feeCh
 }
 
 export function decodeMethodResult(
-    contract: Contract,
+    web3: any,
+    abi: any,
     methodName: string,
     data: string
 ) {
-    const typeDefine = (contract as any)._jsonInterface.filter(
+    const typeDefine = abi.filter(
         (a: any) => a['name'] === methodName
     )[0].outputs;
-    return (contract as any)._decodeMethodReturn(typeDefine, data);
+    return web3.eth.abi.decodeParameters(typeDefine, data)
 }

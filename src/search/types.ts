@@ -1,6 +1,6 @@
 import { TokenInfoFormatted } from "../base/types"
 import { Contract } from 'web3-eth-contract'
-import Web3 from "web3";
+import Web3, { ContractAbi } from "web3";
 
 export interface DagNode {
     
@@ -87,7 +87,7 @@ export interface PoolPair {
 export interface PreQueryParams {
     chainId: number,
     web3: Web3,
-    multicall: Contract,
+    multicall: Contract<ContractAbi>,
     tokenIn: TokenInfoFormatted,
     tokenOut: TokenInfoFormatted,
     liquidityManagerAddress: string,
@@ -101,7 +101,7 @@ export interface PathQueryParams {
     chainId: number,
     quoterAddress: string,
     web3: Web3,
-    multicall: Contract,
+    multicall: Contract<ContractAbi>,
     tokenIn: TokenInfoFormatted,
     tokenOut: TokenInfoFormatted,
     direction: SwapDirection,
@@ -114,7 +114,7 @@ export interface SearchPathQueryParams {
 
     chainId: number,
     web3: Web3,
-    multicall: Contract,
+    multicall: Contract<ContractAbi>,
     tokenIn: TokenInfoFormatted,
     tokenOut: TokenInfoFormatted,
     liquidityManagerAddress: string,

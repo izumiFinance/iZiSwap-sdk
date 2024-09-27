@@ -57,8 +57,8 @@ export const liquidityParams = [
 ]
 
 export interface LiquidityRawParams {
-    leftPt: number,
-    rightPt: number,
+    leftPt: any,
+    rightPt: any,
     liquidity: any,
     lastFeeScaleX_128: any,
     lastFeeScaleY_128: any,

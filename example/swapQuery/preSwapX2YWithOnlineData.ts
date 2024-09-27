@@ -16,7 +16,7 @@ import { QuoterSwapSingleWithExactInputParams } from '../../src/quoter/types';
 async function main(): Promise<void> {
     const chain:BaseChain = initialChainTable[ChainId.BSCTestnet]
     // test net
-    const rpc = 'https://data-seed-prebsc-1-s3.binance.org:8545/'
+    const rpc = 'https://bsc-testnet-rpc.publicnode.com'
     console.log('rpc: ', rpc)
     
     const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
