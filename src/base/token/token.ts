@@ -68,7 +68,7 @@ export const isGasToken = (token: TokenInfoFormatted, chainId: ChainId): boolean
     const chainTokenAddress = chain?.token.address ?? '';
     if (
         token.chainId === chainId &&
-        token.symbol === chain?.tokenSymbol &&
+        token.symbol.toLowerCase() === chain?.tokenSymbol?.toLowerCase() &&
         token.address.toLowerCase() === chainTokenAddress.toLowerCase()
     ) {
         return true;
@@ -96,7 +96,7 @@ export const isWrappedGasToken = (token: TokenInfoFormatted, chainId: ChainId): 
     const chainTokenAddress = chain?.token.address ?? '';
     if (
         token.chainId === chainId &&
-        token.symbol !== chain?.tokenSymbol &&
+        token.symbol.toLowerCase() !== chain?.tokenSymbol?.toLowerCase() &&
         token.address.toLowerCase() === chainTokenAddress.toLowerCase()
     ) {
         return true;
