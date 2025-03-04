@@ -68,6 +68,8 @@ export enum ChainId {
     Plume = 98865,
     Duckchain = 5545,
     HashKey = 177,
+    Hemi = 43111,
+    OverProtocol = 54176,
 
     // testnet
     Rinkeby = 4,
@@ -1858,6 +1860,42 @@ const initialChains: BaseChain[] = [
         scanName: 'Duckchain Mainnet Scan',
         vmType: 'EVM',
         rpcUrl: 'https://rpc.duckchain.io',
+    },
+    {
+        id: ChainId.Hemi,
+        name: 'Hemi',
+        tokenSymbol: 'ETH',
+        token: {
+            symbol: 'ETH',
+            address: '0x4200000000000000000000000000000000000006',
+        },
+        wrappedTokenSymbol: 'WETH',
+        wrappedToken: {
+            symbol: 'WETH',
+            address: '0x4200000000000000000000000000000000000006',
+        },
+        scanUrl: 'https://explorer.hemi.xyz/',
+        scanName: 'Hemi Mainnet Explorer',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.hemi.network/rpc',
+    },
+    {
+        id: ChainId.OverProtocol,
+        name: 'Over Protocol',
+        tokenSymbol: 'OVER',
+        token: {
+            symbol: 'OVER',
+            address: '0x59c914C8ac6F212bb655737CC80d9Abc79A1e273',
+        },
+        wrappedTokenSymbol: 'WOVER',
+        wrappedToken: {
+            symbol: 'WOVER',
+            address: '0x59c914C8ac6F212bb655737CC80d9Abc79A1e273',
+        },
+        scanUrl: 'https://scan.over.network/',
+        scanName: 'Over Protocol Mainnet Scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc.overprotocol.com/',
     },
 ];
 
