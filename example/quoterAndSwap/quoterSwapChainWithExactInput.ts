@@ -108,7 +108,7 @@ async function main(): Promise<void> {
         privateKey
     )
     // nonce += 1;
-    const tx = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const tx = await web3.eth.sendSignedTransaction(signedTx.rawTransaction!);
     console.log('tx: ', tx);
 
     const tokenABalanceAfterSwap = await tokenAContract.methods.balanceOf(account.address).call()
