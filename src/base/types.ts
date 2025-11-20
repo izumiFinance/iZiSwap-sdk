@@ -70,6 +70,7 @@ export enum ChainId {
     HashKey = 177,
     Hemi = 43111,
     OverProtocol = 54176,
+    Monad = 143,
 
     // testnet
     Rinkeby = 4,
@@ -1896,6 +1897,26 @@ const initialChains: BaseChain[] = [
         scanName: 'Over Protocol Mainnet Scan',
         vmType: 'EVM',
         rpcUrl: 'https://rpc.overprotocol.com/',
+    },
+    {
+        id: ChainId.Monad,
+        name: 'Monad',
+        tokenSymbol: 'MON',
+        token: {
+            symbol: 'MON',
+            decimal: 18,
+            address: '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A',
+        },
+        wrappedTokenSymbol: 'WMON',
+        wrappedToken: {
+            symbol: 'WMON',
+            decimal: 18,
+            address: '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A',
+        },
+        scanUrl: 'https://mainnet-beta.monvision.io/',
+        scanName: 'Monad Mainnet Scan',
+        vmType: 'EVM',
+        rpcUrl: 'https://rpc-mainnet.monadinfra.com/rpc/Q6klAtGWnibt6VTOQ2p0UT25HCaNMimQ',
     },
 ];
 
